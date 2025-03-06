@@ -1,0 +1,21 @@
+###########################################################################
+
+#  ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
+# ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
+# ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+# ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+# ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+#  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
+#
+# Configuration file for the "foo-project".
+# This file contains project-wide settings, such as thresholds, variables, and other
+# parameters used in the Snakemake workflow.
+
+###########################################################################
+
+# Project name
+name: foo-project
+
+# Thresholds or other variables
+# threshold: 0.05  # Example threshold for statistical significance
+# max_iterations: 1000  # Example maximum number of iterations for an algorithm
