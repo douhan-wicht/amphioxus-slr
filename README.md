@@ -1,4 +1,6 @@
-# The Foo Project
+# The Amphioxus SLR Project
+
+![Project Logo](ressources/amphioxus_logo.png)
 
 This project serves as a sandbox for familiarizing myself with the directory structure I plan to use in my master project, which will extensively leverage Snakemake.
 
