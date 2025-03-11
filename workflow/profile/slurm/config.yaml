@@ -1,6 +1,0 @@
-cluster: "sbatch -J {params.name} -N 1 \
-    -o logs/.slurm/%x.out -e logs/.slurm/%x.err \
-    --cpus-per-task={params.threads} \
-    --mem={params.mem} -t {params.time}"
-jobs: 30  # Max parallel jobs
-use-conda: true

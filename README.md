@@ -58,6 +58,10 @@ snakemake -p --profile workflow/profile/slurm \
     --use-conda
 ```
 
+```sh
+snakemake -p --snakefile workflow/snakefile --directory . --cores 1 --use-conda
+```
+
 ## Project Directory Structure
 
 The project follows a structured organization to facilitate reproducibility and ease of use:

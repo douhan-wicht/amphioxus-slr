@@ -2,5 +2,6 @@ name: setup
 channels:
     - conda-forge
     - bioconda
+    - defaults
 dependencies:
     - rsync # Better copy-paste than cp

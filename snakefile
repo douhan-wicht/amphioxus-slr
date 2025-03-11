@@ -20,20 +20,15 @@
 configfile: "config/amphioxus-slr.yaml"
 
 # Include local rules
-localrules: import_data #, ...
+localrules: import_data
 
 # Include the other rules
-include: rules/setup.smk #, ...
-
+include: "rules/setup.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
-	'''
-	List of final output files.
-	'''
-	input:
-		"data/DNAseqVCF/" #, ...
-
-
-
-
+    """
+    List of final output files.
+    """
+    input:
+        "data/DNAseqVCF/"  # Replace with actual final outputs
