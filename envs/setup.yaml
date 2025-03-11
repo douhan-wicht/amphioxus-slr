@@ -1,0 +1,6 @@
+name: setup
+channels:
+    - conda-forge
+    - bioconda
+dependencies:
+    - rsync # Better copy-paste than cp

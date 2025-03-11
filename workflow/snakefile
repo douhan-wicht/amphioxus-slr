@@ -17,13 +17,13 @@
 ###########################################################################
 
 # Project wide configuration
-configfile: "config/foo-project.yaml"
+configfile: "config/amphioxus-slr.yaml"
 
 # Include local rules
-localrules: copy_fastq_NAS_data #, ...
+localrules: import_data #, ...
 
 # Include the other rules
-include: 'rules/foo.smk'
+include: rules/setup.smk #, ...
 
 
 # Include a master rule to produce all the final output files
@@ -32,7 +32,7 @@ rule all:
 	List of final output files.
 	'''
 	input:
-		rules.plot_Figure1.output.PDF
+		"data/DNAseqVCF/" #, ...
 
 
 

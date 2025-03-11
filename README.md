@@ -40,10 +40,21 @@ For execution on a computing cluster:
 snakemake -p -j 30 \
     --snakefile workflow/snakefile \
     --directory . \
+    --executor cluster \
     --cluster "sbatch -J {params.name} -N 1 \
     -o logs/.slurm/%x.out -e logs/.slurm/%x.err \
     --cpus-per-task={params.threads} \
     --mem={params.mem} -t {params.time}" \
+    --use-conda
+```
+
+or with a snakemake profile:
+
+```sh
+snakemake -p --profile workflow/profile/slurm \
+    --snakefile workflow/snakefile \
+    --directory . \
+    --cores 30 \
     --use-conda
 ```
 

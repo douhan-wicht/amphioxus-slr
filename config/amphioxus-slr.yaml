@@ -14,7 +14,7 @@
 ###########################################################################
 
 # Project name
-name: foo-project
+name: amphioxus-slr
 
 # Thresholds or other variables
 # threshold: 0.05  # Example threshold for statistical significance
