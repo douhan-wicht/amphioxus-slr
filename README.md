@@ -1,36 +1,40 @@
-# The Foo Project
+# The Amphioxus SLR Project
 
-This project serves as a sandbox for familiarizing myself with the directory structure I plan to use in my master project, which will extensively leverage Snakemake.
+![Project Logo](ressources/amphioxus_logo.png)
 
-## Basic Environment
+## Overview
 
+The **Amphioxus SLR Project** aims to apply a novel tool, [SLRfinder](https://github.com/xuelingyi/SLRfinder), to identify sex-linked regions in *Amphioxus*. By leveraging this tool, we seek to gain insights into the mechanisms of sex determination in *Amphioxus* and contribute to a broader understanding of the diversification of sex-determination mechanisms in chordates.
+
+## Environment Requirements
+
+Ensure you have the following dependencies installed:
+
+- **micromamba**: *Insert version here*
 - **conda**: *Insert version here*
-- **mamba**: *Insert version here*
 - **snakemake**: 8.29.0
 
----
+## Setup
 
-## Before Starting
-
-Activate the Snakemake environment:
+Before running the workflow, activate the Snakemake environment:
 
 ```sh
 micromamba activate snakemake-env
 ```
 
----
+## Running Snakemake
 
-## Snakemake Usage
+### Dry Run (Validation)
 
-### Dry Run
-
-For an initial dry run, execute:
+To perform a dry run and validate the workflow without executing commands:
 
 ```sh
 snakemake --cores 1 -p --use-conda -n
 ```
 
-### Cluster Run
+### Cluster Execution
+
+For execution on a computing cluster:
 
 ```sh
 snakemake -p -j 30 \
@@ -43,26 +47,30 @@ snakemake -p -j 30 \
     --use-conda
 ```
 
+## Project Directory Structure
+
+The project follows a structured organization to facilitate reproducibility and ease of use:
+
+- **`config/`**  → Configuration files (modify for different genomes or datasets).
+- **`rules/`**  → Snakemake rules defining the workflow.
+- **`scripts/`**  → Scripts for raw data analysis and result generation.
+- **`envs/`**  → Conda environments for specific workflow steps.
+- **`metadata/`**  → Sample metadata.
+- **`results/`**  → Intermediate and final results, including plots (organized by rule groups).
+- **`data/`**  → Raw data files (e.g., FASTQ files, genome sequences).
+- **`logs/`**  → Log files for debugging and tracking runs.
+- **`benchmarks/`**  → Workflow performance benchmarks.
+
+## Workflow Overview
+
+This section provides details on the workflow execution, dependencies, and outputs:
+
+- **Execution Order:** Describes the sequence in which rules are executed.
+- **Generated Files:** Specifies the outputs at each stage.
+- **Workflow Rationale:** Explains the design choices and dependencies.
+
+_(Consider expanding this section with a visual workflow diagram or example outputs.)_
+
 ---
 
-## Folder Organization
-
-- `config`  → Configuration files (modify for different genomes or datasets).
-- `rules`  → Snakemake rules calling scripts to generate results.
-- `scripts`  → Scripts for raw data analysis and result generation.
-- `envs`  → Conda environments corresponding to specific rule groups.
-- `metadata`  → Sample metadata.
-- `results`  → Intermediate results & plots (organized by rule groups).
-- `data`  → Raw data (FASTQ files, genome files, etc.).
-- `logs`  → Logs for debugging and tracking runs.
-- `benchmarks`  → Performance benchmarks of workflows.
-
----
-
-## Workflow
-
-This section should describe the workflow execution order, dependencies, and outputs. Include details on:
-
-- Which rules are executed first.
-- What files are produced at each step.
-- The reasoning behind the structure.
+For any questions or contributions, please refer to the project's documentation or contact the maintainers.
