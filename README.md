@@ -10,13 +10,13 @@ The **Amphioxus SLR Project** aims to apply a novel tool, [SLRfinder](https://gi
 
 Ensure you have the following dependencies installed:
 
-- **micromamba**: *Insert version here*
-- **conda**: *Insert version here*
+- **micromamba**: 1.4.2
+- **conda**: 25.1.1
 - **snakemake**: 8.29.0
 
 ## Setup
 
-Before running the workflow, activate the Snakemake environment:
+Before running the workflow, activate the Snakemake environment containing snakemake and conda:
 
 ```sh
 micromamba activate snakemake-env
@@ -34,32 +34,24 @@ snakemake --cores 1 -p --use-conda -n
 
 ### Cluster Execution
 
-For execution on a computing cluster:
-
-```sh
-snakemake -p -j 30 \
-    --snakefile workflow/snakefile \
-    --directory . \
-    --executor cluster \
-    --cluster "sbatch -J {params.name} -N 1 \
+For execution on a computing cluster using `Slurm`, the cluster configuration for job submission is defined in `config/amphioxus-slr.yaml` and called in the `snakefile`:
+```yaml
+# Cluster configuration for slurm job submission
+cluster: "sbatch -J {params.name} -N 1 \
     -o logs/.slurm/%x.out -e logs/.slurm/%x.err \
     --cpus-per-task={params.threads} \
-    --mem={params.mem} -t {params.time}" \
-    --use-conda
+    --mem={params.mem} -t {params.time}"
+
+# Maximum number of jobs to run in parallel
+jobs: 30  # Max parallel jobs
+
+# Use Conda environments for the workflow
+use-conda: true
 ```
 
-or with a snakemake profile:
-
+The workflow can then be executed using:
 ```sh
-snakemake -p --profile workflow/profile/slurm \
-    --snakefile workflow/snakefile \
-    --directory . \
-    --cores 30 \
-    --use-conda
-```
-
-```sh
-snakemake -p --snakefile workflow/snakefile --directory . --cores 1 --use-conda
+snakemake --cores 1 -p --use-conda
 ```
 
 ## Project Directory Structure

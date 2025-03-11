@@ -29,10 +29,10 @@ rule import_data:
     conda:
         '../envs/setup.yaml'
     params:
-        time = '1:00:00',
+        time = "1:00:00",
         name = "import_data",
         threads = 1,
-        mem = 2000,
+        mem = "2G",
     shell:
         """
         mkdir -p {output}

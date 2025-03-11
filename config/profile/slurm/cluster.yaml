@@ -1,0 +1,6 @@
+__default__:
+  jobname: "{rule}"
+  threads: 1
+  mem: "4G"
+  time: "01:00:00"
+  cluster: "sbatch -J {jobname} -N 1 -o logs/.slurm/%x.out -e logs/.slurm/%x.err --cpus-per-task={threads} --mem={mem} -t {time}"
