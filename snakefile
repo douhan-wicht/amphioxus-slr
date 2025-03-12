@@ -27,10 +27,16 @@ include: "rules/setup.smk", "rules/SLRfinder.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
-    """
-    List of final output files.
-    """
+    params:
+        time = "10:00:00",
+        name = "all",
+        threads = 10,
+        mem = "4G",
+    log:
+        err = "logs/snakefile/all.err",
+        out = "logs/snakefile/all.out"
     input:
-        "data/DNAseqVCF/ShortVariants_HardCallableFiltered.chr1.vcf.gz",
-        "scripts/SLRfinder/amphioxus/a15m75/amphioxus_chr1_a15m75.recode.vcf",
-        "scripts/SLRfinder/amphioxus/GenoLD.snp100/amphioxus_chr1_a15m75.geno.ld"
+        "scripts/SLRfinder/amphioxus/amphioxus.csv", # Metadata
+        "scripts/SLRfinder/amphioxus/reference.list", # Reference list
+    shell:
+        "echo 'All done!' > {log.out} 2> {log.err}"

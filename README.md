@@ -53,6 +53,40 @@ The project follows a structured organization to facilitate reproducibility and 
 - **`logs/`**  → Log files for debugging and tracking runs.
 - **`benchmarks/`**  → Workflow performance benchmarks.
 
+The project directory structure is as follows:
+
+```plaintext
+├── README.md
+├── benchmarks
+├── config
+│   └── amphioxus-slr.yaml
+├── data
+│   └── DNAseqVCF
+├── envs
+│   ├── SLRfinder.yaml
+│   └── setup.yaml
+├── logs
+│   └── setup
+│       ├── import_data.err
+│       └── import_data.out
+├── metadata
+│   ├── metadata.csv
+│   └── reference.list
+├── ressources
+│   └── amphioxus_logo.png
+├── results
+│   └── SLRfinder
+├── rules
+│   ├── SLRfinder.smk
+│   └── setup.smk
+├── scripts
+│   ├── SLRfinder
+│   │   └── amphioxus
+│   │       └── SLRfinder_functions.r
+│   └── setup
+└── snakefile
+```
+
 ## Workflow Overview
 
 This section provides details on the workflow execution, dependencies, and outputs:

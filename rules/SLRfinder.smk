@@ -34,7 +34,7 @@ rule copy_metadata_and_reference:
         threads = 1,
         mem = "2G",
     shell:
-        "cp {input.metadata} {output[0]} && cp {input.reference} {output[1]}"
+        "cp {input.metadata} {output[0]} && cp {input.reference} {output[1]} >> {log.out} 2>> {log.err}"
 
 ################################################
 ## Rule: vcf_filtering_ld_estimation
