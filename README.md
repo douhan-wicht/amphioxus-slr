@@ -34,24 +34,9 @@ snakemake --cores 1 -p --use-conda -n
 
 ### Cluster Execution
 
-For execution on a computing cluster using `Slurm`, the cluster configuration for job submission is defined in `config/amphioxus-slr.yaml` and called in the `snakefile`:
-```yaml
-# Cluster configuration for slurm job submission
-cluster: "sbatch -J {params.name} -N 1 \
-    -o logs/.slurm/%x.out -e logs/.slurm/%x.err \
-    --cpus-per-task={params.threads} \
-    --mem={params.mem} -t {params.time}"
-
-# Maximum number of jobs to run in parallel
-jobs: 30  # Max parallel jobs
-
-# Use Conda environments for the workflow
-use-conda: true
-```
-
 The workflow can then be executed using:
 ```sh
-snakemake --cores 1 -p --use-conda
+snakemake -p -j 30 --cluster "sbatch -J {params.name} -N 1 -o ./logs/.slurm/%x.out -e ./logs/.slurm/%x.err --cpus-per-task={params.threads} --mem={params.mem} -t {params.time}" --use-conda
 ```
 
 ## Project Directory Structure

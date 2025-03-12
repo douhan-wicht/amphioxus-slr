@@ -22,7 +22,7 @@ rule import_data:
     This rule copies raw data from the shared storage to the local working directory.
     """
     output:
-        directory("data/DNAseqVCF")  # Target location in your project
+        directory("data/DNAseqVCF")
     log:
         err = "logs/setup/import_data.err",
         out = "logs/setup/import_data.out"

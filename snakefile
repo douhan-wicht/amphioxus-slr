@@ -31,6 +31,6 @@ rule all:
     List of final output files.
     """
     input:
-        "data/DNAseqVCF/",
-        "scripts/SLRfinder/amphioxus/a15m75/",
-        "scripts/SLRfinder/amphioxus/GenoLD.snp100/",
+        "data/DNAseqVCF/ShortVariants_HardCallableFiltered.chr1.vcf.gz",
+        "scripts/SLRfinder/amphioxus/a15m75/amphioxus_chr1_a15m75.recode.vcf",
+        "scripts/SLRfinder/amphioxus/GenoLD.snp100/amphioxus_chr1_a15m75.geno.ld"

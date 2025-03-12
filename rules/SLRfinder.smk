@@ -12,8 +12,8 @@
 ###########################################################################
 
 ################################################
-## Rule: 
-## Description:
+## Rule: copy_metadata_and_reference
+## Description: This rule copies the metadata and reference list to the SLRfinder folder.
 ################################################
 
 rule copy_metadata_and_reference:
@@ -37,14 +37,14 @@ rule copy_metadata_and_reference:
         "cp {input.metadata} {output[0]} && cp {input.reference} {output[1]}"
 
 ################################################
-## Rule: 
-## Description:
+## Rule: vcf_filtering_ld_estimation
+## Description: This rule filters the VCF files and estimates LD using vcftools.
 ################################################
 
 rule vcf_filtering_ld_estimation:
     input:
         # The VCF files for each chromosome/contig and the reference list
-        vcf="data/{ind}_{lg}.vcf.gz",
+        vcf="data/DNAseqVCF/ShortVariants_HardCallableFiltered.{lg}.vcf.gz",
         reference="scripts/SLRfinder/amphioxus/reference.list"
     output:
         # Output filtered VCF and LD edge list
@@ -69,21 +69,23 @@ rule vcf_filtering_ld_estimation:
         ld_window = 100
     shell:
         """
-        # Create necessary directories if they don't exist
-        mkdir -p a15m75 GenoLD.snp100
+        # Create necessary directories inside the 'scripts/SLRfinder/amphioxus' folder if they don't exist
+        mkdir -p scripts/SLRfinder/amphioxus/a15m75
+        mkdir -p scripts/SLRfinder/amphioxus/GenoLD.snp100
 
         # Get chromosome name and LG from the reference list using the SLURM_ARRAY_TASK_ID
         chr=$(sed -n ${SLURM_ARRAY_TASK_ID}p {input.reference} | awk '{print $1}')
         lg=$(sed -n ${SLURM_ARRAY_TASK_ID}p {input.reference} | awk '{print $2}')
-        ind=mydata
+        ind=amphioxus
 
         # Step 1: SNP filtering using bcftools and vcftools
         bcftools view -m2 -M2 -v snps --min-ac={params.min_ac} {input.vcf} \
         | vcftools --vcf - --minGQ {params.min_gq} --minQ {params.min_q} --maf {params.maf} --max-missing {params.max_missing} \
-        --recode --recode-INFO-all --out {output.filtered_vcf}
+        --recode --recode-INFO-all --out {output.filtered_vcf} \
+        >> {log.out} 2>> {log.err}
 
         # Step 2: LD estimation using vcftools
         vcftools --vcf {output.filtered_vcf} --geno-r2 --ld-window {params.ld_window} \
-        --out {output.ld_file}
+        --out {output.ld_file} \
+        >> {log.out} 2>> {log.err}
         """
-
