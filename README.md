@@ -75,9 +75,3 @@ This section provides details on the workflow execution, dependencies, and outpu
 - **Execution Order:** Describes the sequence in which rules are executed.
 - **Generated Files:** Specifies the outputs at each stage.
 - **Workflow Rationale:** Explains the design choices and dependencies.
-
-_(Consider expanding this section with a visual workflow diagram or example outputs.)_
-
----
-
-For any questions or contributions, please refer to the project's documentation or contact the maintainers.
