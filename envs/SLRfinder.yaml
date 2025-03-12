@@ -13,5 +13,7 @@ dependencies:
     - r-parallel
     - r-BiocManager
     - r-SNPRelate
+    - bcftools
+    - vcftools
 post-activate:
     - Rscript -e "if (!require('BiocManager', quietly = TRUE)) install.packages('BiocManager'); BiocManager::install('SNPRelate')"

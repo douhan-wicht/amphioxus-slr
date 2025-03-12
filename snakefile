@@ -23,7 +23,7 @@ configfile: "config/amphioxus-slr.yaml"
 localrules: import_data
 
 # Include the other rules
-include: "rules/setup.smk"
+include: "rules/setup.smk", "rules/SLRfinder.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
@@ -31,4 +31,6 @@ rule all:
     List of final output files.
     """
     input:
-        "data/DNAseqVCF/"  # Replace with actual final outputs
+        "data/DNAseqVCF/",
+        "scripts/SLRfinder/amphioxus/a15m75/",
+        "scripts/SLRfinder/amphioxus/GenoLD.snp100/",
