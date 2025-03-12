@@ -23,20 +23,11 @@ configfile: "config/amphioxus-slr.yaml"
 localrules: import_data
 
 # Include the other rules
-include: "rules/setup.smk", "rules/SLRfinder.smk"
+include: "rules/setup.smk",
+include: "rules/SLRfinder.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
-    params:
-        time = "10:00:00",
-        name = "all",
-        threads = 10,
-        mem = "4G",
-    log:
-        err = "logs/snakefile/all.err",
-        out = "logs/snakefile/all.out"
     input:
         "scripts/SLRfinder/amphioxus/amphioxus.csv", # Metadata
         "scripts/SLRfinder/amphioxus/reference.list", # Reference list
-    shell:
-        "echo 'All done!' > {log.out} 2> {log.err}"
