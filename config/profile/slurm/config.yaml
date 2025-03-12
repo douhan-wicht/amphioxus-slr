@@ -1,3 +1,0 @@
-jobs: 30
-use-conda: true
-cluster-config: "./cluster.yaml"
