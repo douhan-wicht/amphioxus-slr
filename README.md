@@ -10,16 +10,15 @@ The **Amphioxus SLR Project** aims to apply a novel tool, [SLRfinder](https://gi
 
 Ensure you have the following dependencies installed:
 
-- **micromamba**: 1.4.2
 - **conda**: 25.1.1
-- **snakemake**: 8.29.0
+- **snakemake**: 7.25.0
 
 ## Setup
 
 Before running the workflow, activate the Snakemake environment containing snakemake and conda:
 
 ```sh
-micromamba activate snakemake-env
+conda activate snakemake-7.25.0
 ```
 
 ## Running Snakemake
