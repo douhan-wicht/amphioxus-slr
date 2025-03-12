@@ -44,12 +44,12 @@ rule copy_metadata_and_reference:
 rule vcf_filtering_ld_estimation:
     input:
         # The VCF files for each chromosome/contig and the reference list
-        vcf="data/DNAseqVCF/ShortVariants_HardCallableFiltered.{lg}.vcf.gz",
+        vcf="data/DNAseqVCF/ShortVariants_HardCallableFiltered.{chromosomes}.vcf.gz",
         reference="scripts/SLRfinder/amphioxus/reference.list"
     output:
         # Output filtered VCF and LD edge list
-        filtered_vcf="scripts/SLRfinder/amphioxus/a15m75/{ind}_{lg}_a15m75.recode.vcf",
-        ld_file="scripts/SLRfinder/amphioxus/GenoLD.snp100/{ind}_{lg}_a15m75.geno.ld"
+        filtered_vcf="scripts/SLRfinder/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf",
+        ld_file="scripts/SLRfinder/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld"
     log:
         err = "logs/SLRfinder/vcf_filtering_ld_estimation.err",
         out = "logs/SLRfinder/vcf_filtering_ld_estimation.out"
