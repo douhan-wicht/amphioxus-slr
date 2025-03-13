@@ -51,8 +51,8 @@ rule vcf_filtering_ld_estimation:
         filtered_vcf="scripts/SLRfinder/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf",
         ld_file="scripts/SLRfinder/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld"
     log:
-        err = "logs/SLRfinder/vcf_filtering_ld_estimation.err",
-        out = "logs/SLRfinder/vcf_filtering_ld_estimation.out"
+        err = "logs/SLRfinder/vcf_filtering_ld_estimation_{chromosomes}.err",
+        out = "logs/SLRfinder/vcf_filtering_ld_estimation_{chromosomes}.out"
     conda:
         '../envs/SLRfinder.yaml'
     params:
@@ -74,18 +74,18 @@ rule vcf_filtering_ld_estimation:
         mkdir -p scripts/SLRfinder/amphioxus/GenoLD.snp100
 
         # Get chromosome name and LG from the reference list using the SLURM_ARRAY_TASK_ID
-        chr=$(sed -n ${SLURM_ARRAY_TASK_ID}p {input.reference} | awk '{print $1}')
-        lg=$(sed -n ${SLURM_ARRAY_TASK_ID}p {input.reference} | awk '{print $2}')
+        chr=$(sed -n ${{SLURM_ARRAY_TASK_ID}}p {input.reference} | awk '{{print $1}}')
+        lg=$(sed -n ${{SLURM_ARRAY_TASK_ID}}p {input.reference} | awk '{{print $2}}')
         ind=amphioxus
 
         # Step 1: SNP filtering using bcftools and vcftools
         bcftools view -m2 -M2 -v snps --min-ac={params.min_ac} {input.vcf} \
         | vcftools --vcf - --minGQ {params.min_gq} --minQ {params.min_q} --maf {params.maf} --max-missing {params.max_missing} \
         --recode --recode-INFO-all --out {output.filtered_vcf} \
-        >> {log.out} 2>> {log.err}
+        > {log.out} 2>> {log.err}
 
         # Step 2: LD estimation using vcftools
         vcftools --vcf {output.filtered_vcf} --geno-r2 --ld-window {params.ld_window} \
         --out {output.ld_file} \
-        >> {log.out} 2>> {log.err}
+        > {log.out} 2>> {log.err}
         """
