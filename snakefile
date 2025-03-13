@@ -31,5 +31,5 @@ rule all:
     input:
         "scripts/SLRfinder/amphioxus/amphioxus.csv", # Metadata
         "scripts/SLRfinder/amphioxus/reference.list", # Reference list
-        expand("scripts/SLRfinder/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"]),
-        expand("scripts/SLRfinder/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld", chromosomes=config["CHROMOSOMES"])
+        # expand("scripts/SLRfinder/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"]),
+        # expand("scripts/SLRfinder/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld", chromosomes=config["CHROMOSOMES"])

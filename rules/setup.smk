@@ -27,7 +27,7 @@ rule import_data:
         err = "logs/setup/import_data.err",
         out = "logs/setup/import_data.out"
     conda:
-        '../envs/setup.yaml'
+        'envs/setup'
     params:
         time = "1:00:00",
         name = "import_data",
