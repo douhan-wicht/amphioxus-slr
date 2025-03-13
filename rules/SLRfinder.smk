@@ -27,7 +27,7 @@ rule copy_metadata_and_reference:
         err = "logs/SLRfinder/copy_metadata_and_reference.err",
         out = "logs/SLRfinder/copy_metadata_and_reference.out"
     conda:
-        "envs/SLRfinder"
+        "/work/FAC/FBM/DEE/mrobinso/evolseq/dwicht1/envs/SLRfinder/SLRfinder.yaml"
     params:
         time = "00:02:00",
         name = "copy_metadata_and_reference",

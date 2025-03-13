@@ -26,8 +26,8 @@ rule import_data:
     log:
         err = "logs/setup/import_data.err",
         out = "logs/setup/import_data.out"
-    conda:
-        'envs/setup'
+    # conda:
+    #     "/work/FAC/FBM/DEE/mrobinso/evolseq/dwicht1/envs/setup/setup.yaml"
     params:
         time = "1:00:00",
         name = "import_data",
