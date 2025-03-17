@@ -21,8 +21,8 @@ rule copy_metadata_and_reference:
         metadata="data/metadata/metadata.csv",
         reference="data/metadata/reference.list"
     output:
-        "scripts/SLRfinder/amphioxus/amphioxus.csv",
-        "scripts/SLRfinder/amphioxus/reference.list"
+        "tmp/amphioxus/amphioxus.csv",
+        "tmp/amphioxus/reference.list"
     log:
         err = "logs/SLRfinder/copy_metadata_and_reference.err",
         out = "logs/SLRfinder/copy_metadata_and_reference.out"

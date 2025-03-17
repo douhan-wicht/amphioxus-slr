@@ -26,13 +26,14 @@ rule import_data:
     log:
         err = "logs/setup/import_data.err",
         out = "logs/setup/import_data.out"
-    # conda:
-    #     "/work/FAC/FBM/DEE/mrobinso/evolseq/dwicht1/envs/setup/setup.yaml"
+    conda:
+        "../envs/setup.yaml"
     params:
-        time = "1:00:00",
         name = "import_data",
-        threads = 1,
-        mem = "2G",
+        time = "00:30:00"
+    resources:
+        mem = 2000,
+        threads = 1
     shell:
         """
         mkdir -p {output}

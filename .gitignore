@@ -1,4 +1,4 @@
 data/
+logs/
+tmp/
 .snakemake
-scripts/SLRfinder/amphioxus/a15m75/
-scripts/SLRfinder/amphioxus/GenoLD.snp100/

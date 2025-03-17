@@ -37,8 +37,11 @@ snakemake --cores 1 -p --use-conda -n
 
 The workflow can then be executed using:
 ```sh
-snakemake -p -j 30 --profile curnagl --use-conda
+snakemake -p -j 30 --profile curnagl --use-conda --executor slurm
 ```
+
+STILL A LOT TO CONFIGURE FOR THE snakemake profile so that the slurm executor works properly. Go see documentation on https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html.
+
 
 ## Project Directory Structure
 
