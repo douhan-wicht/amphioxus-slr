@@ -11,15 +11,17 @@ The **Amphioxus SLR Project** aims to apply a novel tool, [SLRfinder](https://gi
 Ensure you have the following dependencies installed:
 
 - **conda**: 25.1.1
-- **snakemake**: 7.25.0
+- **snakemake**: 8.30.0
 
 ## Setup
 
 Before running the workflow, activate the Snakemake environment containing snakemake and conda:
 
 ```sh
-conda activate snakemake-7.25.0
+conda activate snakemake-8.30.0
 ```
+
+The workflow was setup according to the best practices described on the snakemake Github repository.
 
 ## Running Snakemake
 
@@ -35,7 +37,7 @@ snakemake --cores 1 -p --use-conda -n
 
 The workflow can then be executed using:
 ```sh
-snakemake -p -j 30 --cluster "sbatch -J {params.name} -N 1 -o ./logs/.slurm/%x.out -e ./logs/.slurm/%x.err --cpus-per-task={params.threads} --mem={params.mem} -t {params.time}" --use-conda
+snakemake -p -j 30 --profile curnagl --use-conda
 ```
 
 ## Project Directory Structure

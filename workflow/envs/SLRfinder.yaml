@@ -1,0 +1,7 @@
+name: SLRfinder
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - rsync

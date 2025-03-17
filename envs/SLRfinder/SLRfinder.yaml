@@ -1,8 +1,0 @@
-# filepath: /work/FAC/FBM/DEE/mrobinso/evolseq/dwicht1/envs/SLRfinder.yaml
-name: SLRfinder
-channels:
-    - conda-forge
-    - bioconda
-    - defaults
-dependencies:
-    - rsync

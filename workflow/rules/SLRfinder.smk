@@ -18,8 +18,8 @@
 
 rule copy_metadata_and_reference:
     input:
-        metadata="metadata/metadata.csv",
-        reference="metadata/reference.list"
+        metadata="data/metadata/metadata.csv",
+        reference="data/metadata/reference.list"
     output:
         "scripts/SLRfinder/amphioxus/amphioxus.csv",
         "scripts/SLRfinder/amphioxus/reference.list"
@@ -27,12 +27,13 @@ rule copy_metadata_and_reference:
         err = "logs/SLRfinder/copy_metadata_and_reference.err",
         out = "logs/SLRfinder/copy_metadata_and_reference.out"
     conda:
-        "/work/FAC/FBM/DEE/mrobinso/evolseq/dwicht1/envs/SLRfinder/SLRfinder.yaml"
+        "../envs/SLRfinder.yaml"
     params:
-        time = "00:02:00",
         name = "copy_metadata_and_reference",
-        threads = 1,
-        mem = "2G",
+        time = "00:10:00"
+    resources:
+        mem = 4096,
+        threads = 1
     shell:
         "cp {input.metadata} {output[0]} && cp {input.reference} {output[1]} >> {log.out} 2>> {log.err}"
 

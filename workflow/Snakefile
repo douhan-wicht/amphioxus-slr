@@ -17,7 +17,7 @@
 ###########################################################################
 
 # Project wide configuration
-configfile: "config/amphioxus-slr.yaml"
+configfile: "config/config.yaml"
 
 # Include local rules
 localrules: import_data
