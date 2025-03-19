@@ -1,6 +1,6 @@
 # The Amphioxus SLR Project
 
-![Project Logo](ressources/amphioxus_logo.png)
+![Project Logo](resources/amphioxus_logo.png)
 
 ## Overview
 
