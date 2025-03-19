@@ -22,20 +22,19 @@ rule import_data:
     This rule copies raw data from the shared storage to the local working directory.
     """
     output:
-        directory("data/DNAseqVCF")
+        directory("data/raw")
     log:
         err = "logs/setup/import_data.err",
         out = "logs/setup/import_data.out"
     conda:
         "../envs/setup.yaml"
-    params:
-        name = "import_data",
-        time = "00:30:00"
     resources:
-        mem = 2000,
-        threads = 1
+        mem_mb = 2000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "10m"
     shell:
         """
         mkdir -p {output}
-        rsync -av --progress /nas/FAC/FBM/DEE/mrobinso/default/D2c/mbrasovi/Banyuls_Roscoff/DNAseqVCF/ {output} > {log.out} 2> {log.err}
+        rsync -av --progress /nas/FAC/FBM/DEE/mrobinso/default/D2c/mbrasovi/Banyuls_Roscoff/DNAseqVCF/ {output}/ > {log.out} 2> {log.err}
         """

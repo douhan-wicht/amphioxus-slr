@@ -28,12 +28,11 @@ rule copy_metadata_and_reference:
         out = "logs/SLRfinder/copy_metadata_and_reference.out"
     conda:
         "../envs/SLRfinder.yaml"
-    params:
-        name = "copy_metadata_and_reference",
-        time = "00:10:00"
     resources:
-        mem = 4096,
-        threads = 1
+        mem_mb = 2000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "10m"
     shell:
         "cp {input.metadata} {output[0]} && cp {input.reference} {output[1]} >> {log.out} 2>> {log.err}"
 

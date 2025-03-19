@@ -20,7 +20,7 @@
 configfile: "config/config.yaml"
 
 # Include local rules
-# localrules:
+localrules: import_data
 
 # Include the other rules
 include: "rules/setup.smk",
@@ -29,7 +29,7 @@ include: "rules/SLRfinder.smk"
 # Include a master rule to produce all the final output files
 rule all:
     input:
-        directory("data/DNAseqVCF"),
+        directory("data/raw"),
         "tmp/amphioxus/amphioxus.csv",
         "tmp/amphioxus/reference.list",
         # expand("scripts/SLRfinder/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"]),

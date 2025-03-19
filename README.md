@@ -12,6 +12,7 @@ Ensure you have the following dependencies installed:
 
 - **conda**: 25.1.1
 - **snakemake**: 8.30.0
+- **snakemake-executor-plugin-slurm**: 1.1.0
 
 ## Setup
 
@@ -21,7 +22,46 @@ Before running the workflow, activate the Snakemake environment containing snake
 conda activate snakemake-8.30.0
 ```
 
-The workflow was setup according to the best practices described on the snakemake Github repository.
+The workflow was setup according to the best practices described in the [snakemake 8.30.0 documentation](https://snakemake.readthedocs.io/en/v8.3.0/).
+
+```plaintext
+├── README.md
+├── .gitignore
+├── config
+│   └── config.yaml
+├── data
+│   ├── raw
+│       └── amphioxus_variants.chr1.vcf.gz
+│   └── metadata
+│       ├── metadata.csv
+│       └── reference.list
+├── logs
+│   ├── rule1
+│   │   ├── rule1.err
+│   │   ├── rule1.out
+│   │   └── rule1_slurm.log
+│   └── rule2
+│       ├── rule2.err
+│       ├── rule2.out
+│       └── rule2_slurm.log
+├── resources
+│   └── amphioxus_logo.png
+├── results
+│   └── rule2
+│       └── rule2_plot.PDF
+└── workflow
+    ├── Snakefile
+    ├── envs
+    │   ├── rule1.yaml
+    │   └── rule2.yaml
+    ├── rules
+    │   ├── rule1.smk
+    │   └── rule2.smk
+    └── scripts
+        ├── rule1
+        └── rule2
+            └── rule2_plot.r
+```
 
 ## Running Snakemake
 
@@ -35,66 +75,31 @@ snakemake --cores 1 -p --use-conda -n
 
 ### Cluster Execution
 
+To simplify the execution on a cluster, a Snakemake profile was created for the SLURM scheduler:
+
+```yaml
+# curnagl/config.yaml
+executor: slurm
+jobs: 30
+use-conda: true
+
+default-resources:
+  slurm_account: "mrobinso_evolseq"
+  slurm_partition: "interactive"
+  runtime: "30m"
+  mem_mb: 2000
+  cpus_per_task: 1
+  threads: 1
+```
+
 The workflow can then be executed using:
+
 ```sh
-snakemake -p -j 30 --profile curnagl --use-conda --executor slurm
+snakemake -p --profile curnagl
 ```
 
-STILL A LOT TO CONFIGURE FOR THE snakemake profile so that the slurm executor works properly. Go see documentation on https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html.
-
-
-## Project Directory Structure
-
-The project follows a structured organization to facilitate reproducibility and ease of use:
-
-- **`config/`**  → Configuration files (modify for different genomes or datasets).
-- **`rules/`**  → Snakemake rules defining the workflow.
-- **`scripts/`**  → Scripts for raw data analysis and result generation.
-- **`envs/`**  → Conda environments for specific workflow steps.
-- **`metadata/`**  → Sample metadata.
-- **`results/`**  → Intermediate and final results, including plots (organized by rule groups).
-- **`data/`**  → Raw data files (e.g., FASTQ files, genome sequences).
-- **`logs/`**  → Log files for debugging and tracking runs.
-- **`benchmarks/`**  → Workflow performance benchmarks.
-
-The project directory structure is as follows:
-
-```plaintext
-├── README.md
-├── benchmarks
-├── config
-│   └── amphioxus-slr.yaml
-├── data
-│   └── DNAseqVCF
-├── envs
-│   ├── SLRfinder.yaml
-│   └── setup.yaml
-├── logs
-│   └── setup
-│       ├── import_data.err
-│       └── import_data.out
-├── metadata
-│   ├── metadata.csv
-│   └── reference.list
-├── ressources
-│   └── amphioxus_logo.png
-├── results
-│   └── SLRfinder
-├── rules
-│   ├── SLRfinder.smk
-│   └── setup.smk
-├── scripts
-│   ├── SLRfinder
-│   │   └── amphioxus
-│   │       └── SLRfinder_functions.r
-│   └── setup
-└── snakefile
-```
+The default resources can be overridden using the `--resources` flag, or by specifying the resources in the rule definition.
 
 ## Workflow Overview
 
-This section provides details on the workflow execution, dependencies, and outputs:
-
-- **Execution Order:** Describes the sequence in which rules are executed.
-- **Generated Files:** Specifies the outputs at each stage.
-- **Workflow Rationale:** Explains the design choices and dependencies.
+TBD.
