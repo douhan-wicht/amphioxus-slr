@@ -3,5 +3,12 @@ channels:
   - conda-forge
   - bioconda
   - defaults
+  - jonaszierer
 dependencies:
-  - rsync
+  - r-igraph
+  - r-data.table
+  - r-snprelate
+  - r-ggplot2
+  - r-ggpubr
+  - r-cowplot
+  - r-parallelly

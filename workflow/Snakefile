@@ -32,5 +32,5 @@ rule all:
         directory("data/raw"),
         "tmp/amphioxus/amphioxus.csv",
         "tmp/amphioxus/reference.list",
-        # expand("scripts/SLRfinder/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"]),
-        # expand("scripts/SLRfinder/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld", chromosomes=config["CHROMOSOMES"])
+        expand("tmp/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"]),
+        expand("tmp/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld", chromosomes=config["CHROMOSOMES"])
