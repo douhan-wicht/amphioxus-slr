@@ -5,6 +5,8 @@ channels:
   - defaults
   - jonaszierer
 dependencies:
+  - bcftools
+  - vcftools
   - r-igraph
   - r-data.table
   - r-snprelate

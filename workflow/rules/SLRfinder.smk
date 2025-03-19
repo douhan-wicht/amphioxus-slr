@@ -66,26 +66,21 @@ rule vcf_filtering_ld_estimation:
         mem_mb = 1000,
         cpus_per_task = 1,
         threads = 1,
-        runtime = "5m"
+        runtime = "15m"
     shell:
         """
         # Create necessary directories inside the 'tmp/amphioxus' folder if they don't exist
-        mkdir -p scripts/SLRfinder/amphioxus/a15m75
-        mkdir -p scripts/SLRfinder/amphioxus/GenoLD.snp100
-
-        # Get chromosome name and LG from the reference list using the SLURM_ARRAY_TASK_ID
-        chr=$(sed -n ${{SLURM_ARRAY_TASK_ID}}p {input.reference} | awk '{{print $1}}')
-        lg=$(sed -n ${{SLURM_ARRAY_TASK_ID}}p {input.reference} | awk '{{print $2}}')
-        ind=amphioxus
+        mkdir -p tmp/amphioxus/a15m75
+        mkdir -p tmp/amphioxus/GenoLD.snp100
 
         # Step 1: SNP filtering using bcftools and vcftools
         bcftools view -m2 -M2 -v snps --min-ac={params.min_ac} {input.vcf} \
         | vcftools --vcf - --minGQ {params.min_gq} --minQ {params.min_q} --maf {params.maf} --max-missing {params.max_missing} \
-        --recode --recode-INFO-all --out {output.filtered_vcf} \
-        > {log.out} 2>> {log.err}
+        --recode --recode-INFO-all --out tmp/amphioxus/a15m75/amphioxus_{wildcards.chromosomes}_a15m75 \
+        > {log.out} 2> {log.err}
 
         # Step 2: LD estimation using vcftools
-        vcftools --vcf {output.filtered_vcf} --geno-r2 --ld-window {params.ld_window} \
-        --out {output.ld_file} \
-        > {log.out} 2>> {log.err}
+        vcftools --vcf tmp/amphioxus/a15m75/amphioxus_{wildcards.chromosomes}_a15m75.recode.vcf --geno-r2 --ld-window {params.ld_window} \
+        --out tmp/amphioxus/GenoLD.snp100/amphioxus_{wildcards.chromosomes}_a15m75 \
+        > {log.out} 2> {log.err}
         """
