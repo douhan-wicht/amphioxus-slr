@@ -43,11 +43,11 @@ rule copy_metadata_and_reference:
 
 rule copy_slrfinder_scripts:
     input:
-        "scripts/SLRfinder/SLRfinder_functions.r",
-        "scripts/SLRfinder/SLRfinder_scripts.R"
+        functions = "workflow/scripts/SLRfinder/SLRfinder_functions.r",
+        scripts = "workflow/scripts/SLRfinder/SLRfinder_scripts.R"
     output:
-        "tmp/amphioxus/SLRfinder_functions.r",
-        "tmp/amphioxus/SLRfinder_scripts.R"
+        functions_out = "tmp/amphioxus/SLRfinder_functions.r",
+        scripts_out = "tmp/amphioxus/SLRfinder_scripts.R"
     log:
         err = "logs/SLRfinder/copy_slrfinder_scripts.err",
         out = "logs/SLRfinder/copy_slrfinder_scripts.out"
@@ -59,7 +59,11 @@ rule copy_slrfinder_scripts:
         threads = 1,
         runtime = "5m"
     shell:
-        "cp {input} {output} >> {log.out} 2>> {log.err}"
+        """
+        mkdir -p tmp/amphioxus && \
+        cp {input.functions} {output.functions_out} && \
+        cp {input.scripts} {output.scripts_out}
+        """
 
 ################################################
 ## Rule: vcf_filtering_ld_estimation
