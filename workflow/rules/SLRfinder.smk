@@ -113,3 +113,31 @@ rule vcf_filtering_ld_estimation:
         --out tmp/amphioxus/GenoLD.snp100/amphioxus_{wildcards.chromosomes}_a15m75 \
         > {log.out} 2> {log.err}
         """
+
+# Define the rule in Snakemake
+rule SLRfinder_execute:
+    input:
+        "tmp/amphioxus/SLRfinder_scripts.R",
+        "tmp/amphioxus/SLRfinder_functions.r"
+    output:
+        "tmp/amphioxus/alldone.txt"
+    log:
+        err = "logs/SLRfinder/SLRfinder_execute.err",
+        out = "logs/SLRfinder/SLRfinder_execute.out"
+    conda:
+        '../envs/SLRfinder.yaml'
+    resources:
+        mem_mb = 4000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "1h"
+    shell:
+        """
+        # Change to the appropriate working directory (dataset folder)
+        cd tmp/amphioxus 
+
+        # Run the R script
+        Rscript SLRfinder_scripts.R
+
+        echo "SLRfinder analysis completed." > {output}
+        """

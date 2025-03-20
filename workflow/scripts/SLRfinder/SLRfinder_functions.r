@@ -8,6 +8,7 @@ library(ggpubr)
 library(data.table)
 library(SNPRelate)
 
+
 get_single_LD_cluster <- function(geno.LD, min_LD = 0.85, min.cl.size = 20){
   
   chr = unique(geno.LD$CHR) 

@@ -1,45 +1,21 @@
 ## run this script in the dataset folder
 
-mydata = readline(prompt="The dataset name: ")
-min_LD = as.numeric(readline(prompt="min_LD (default 0.85): "))
-min.cl.size = as.numeric(readline(prompt="min.cl.size (default 20): "))
-myranks = readline(prompt="use default (Dext_var_rank, R2_rank, nSNPs_rank, chi2_rank)?")
-sex_info = readline(prompt="Sex available? (default F)")
-sex_filter = as.numeric(readline(prompt="filtering threshold of misplaced sexes (default 0.1): "))
-my_sex_ratio = readline(prompt="sex ratio (space separated; default 0.5 0.5): ")
-ncores = as.numeric(readline(prompt="cores to use (default 1): "))
-
-if(myranks) { myranks = c("Dext_var_rank", "R2_rank", "nSNPs_rank", "chi2_rank")} else {
-  myranks = readline(prompt="specify myranks (space separated): ")
-  myranks = unlist(strsplit(myranks, split = " "))
-}
-my_sex_ratio = as.numeric(unlist(strsplit(my_sex_ratio, split = " ")))
-
-
-#mydata = "mydata"
-#min_LD=0.85
-#min.cl.size=20
-#ncores=1
-#myranks=c("Dext_var_rank", "R2_rank", "nSNPs_rank", "chi2_rank")
-#sex_info=F
-#sex_filter = 0.1
+mydata = "amphioxus"
+min_LD = 0.85
+min.cl.size = 20
+myranks = c("Dext_var_rank", "R2_rank", "nSNPs_rank", "chi2_rank")
+sex_info = TRUE
+sex_filter = 0.1
+my_sex_ratio = c(0.5, 0.5)
+ncores = 1
 
 ########### read data information ###########
 print("read data information")
-## dataset name
-#mydata = "mydata"
 
 sif = read.csv(paste0(mydata, ".csv"))
 # get genome information (contig names in column1, chromosome names in column2)
 LG = read.table("reference.list", header = F)
 names(LG) = c("chr", "lg")
-
-# default parameters for whole-genome sequencing data
-# min_LD=0.85
-# min.cl.size=20 
-# use loser thresholds for RADseq data which are much sparser
-# min_LD=0.2
-# min.cl.size=5
 
 source("SLRfinder_functions.r")
 ########## step 1. get LD clusters ##########
