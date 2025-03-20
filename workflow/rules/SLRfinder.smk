@@ -37,6 +37,31 @@ rule copy_metadata_and_reference:
         "cp {input.metadata} {output[0]} && cp {input.reference} {output[1]} >> {log.out} 2>> {log.err}"
 
 ################################################
+## Rule: copy_slrfinder
+## Description: This rule copies the SLRfinder functions to the tmp folder.
+################################################
+
+rule copy_slrfinder_scripts:
+    input:
+        "scripts/SLRfinder/SLRfinder_functions.r",
+        "scripts/SLRfinder/SLRfinder_scripts.R"
+    output:
+        "tmp/amphioxus/SLRfinder_functions.r",
+        "tmp/amphioxus/SLRfinder_scripts.R"
+    log:
+        err = "logs/SLRfinder/copy_slrfinder_scripts.err",
+        out = "logs/SLRfinder/copy_slrfinder_scripts.out"
+    conda:
+        "../envs/SLRfinder.yaml"
+    resources:
+        mem_mb = 1000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "5m"
+    shell:
+        "cp {input} {output} >> {log.out} 2>> {log.err}"
+
+################################################
 ## Rule: vcf_filtering_ld_estimation
 ## Description: This rule filters the VCF files and estimates LD using vcftools.
 ################################################
