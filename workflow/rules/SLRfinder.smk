@@ -68,6 +68,7 @@ rule copy_slrfinder_scripts:
 ################################################
 ## Rule: vcf_filtering_ld_estimation
 ## Description: This rule filters the VCF files and estimates LD using vcftools.
+## Look for PASS flag -> the ones that have passed the Marina check. (gatk calling)
 ################################################
 
 rule vcf_filtering_ld_estimation:
@@ -127,7 +128,7 @@ rule SLRfinder_execute:
     conda:
         '../envs/SLRfinder.yaml'
     resources:
-        mem_mb = 4000,
+        mem_mb = 8000,
         cpus_per_task = 1,
         threads = 1,
         runtime = "1h"

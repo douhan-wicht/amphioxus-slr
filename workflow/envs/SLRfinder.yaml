@@ -3,15 +3,15 @@ channels:
   - conda-forge
   - bioconda
   - defaults
-  - jonaszierer
 dependencies:
   - r-base
   - bcftools
   - vcftools
   - r-igraph
   - r-data.table
-  - r-snprelate
   - r-ggplot2
   - r-ggpubr
   - r-cowplot
   - r-parallelly
+  - r-biocmanager
+  - bioconductor-snprelate
