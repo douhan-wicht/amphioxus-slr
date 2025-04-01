@@ -12,60 +12,6 @@
 ###########################################################################
 
 ################################################
-## Rule: copy_metadata_and_reference
-## Description: This rule copies the metadata and reference list to the SLRfinder folder.
-################################################
-
-rule copy_metadata_and_reference:
-    input:
-        metadata="data/metadata/metadata.csv",
-        reference="data/metadata/reference.list"
-    output:
-        "tmp/amphioxus/amphioxus.csv",
-        "tmp/amphioxus/reference.list"
-    log:
-        err = "logs/SLRfinder/copy_metadata_and_reference.err",
-        out = "logs/SLRfinder/copy_metadata_and_reference.out"
-    conda:
-        "../envs/SLRfinder.yaml"
-    resources:
-        mem_mb = 2000,
-        cpus_per_task = 1,
-        threads = 1,
-        runtime = "10m"
-    shell:
-        "cp {input.metadata} {output[0]} && cp {input.reference} {output[1]} >> {log.out} 2>> {log.err}"
-
-################################################
-## Rule: copy_slrfinder
-## Description: This rule copies the SLRfinder functions to the tmp folder.
-################################################
-
-rule copy_slrfinder_scripts:
-    input:
-        functions = "workflow/scripts/SLRfinder/SLRfinder_functions.r",
-        scripts = "workflow/scripts/SLRfinder/SLRfinder_scripts.R"
-    output:
-        functions_out = "tmp/amphioxus/SLRfinder_functions.r",
-        scripts_out = "tmp/amphioxus/SLRfinder_scripts.R"
-    log:
-        err = "logs/SLRfinder/copy_slrfinder_scripts.err",
-        out = "logs/SLRfinder/copy_slrfinder_scripts.out"
-    conda:
-        "../envs/SLRfinder.yaml"
-    resources:
-        mem_mb = 1000,
-        cpus_per_task = 1,
-        threads = 1,
-        runtime = "5m"
-    shell:
-        """
-        mkdir -p tmp/amphioxus && \
-        cp {input.functions} {output.functions_out} && \
-        cp {input.scripts} {output.scripts_out}
-        """
-
-################################################
 ## Rule: vcf_filtering_ld_estimation
 ## Description: This rule filters the VCF files and estimates LD using vcftools.
 ## Look for PASS flag -> the ones that have passed the Marina check. (gatk calling)
@@ -74,7 +20,7 @@ rule copy_slrfinder_scripts:
 rule vcf_filtering_ld_estimation:
     input:
         # The VCF files for each chromosome/contig and the reference list
-        vcf="data/raw/ShortVariants_HardCallableFiltered.{chromosomes}.vcf.gz",
+        vcf="data/subset/ShortVariants_HardCallableFiltered.{chromosomes}.vcf.gz",
         reference="tmp/amphioxus/reference.list"
     output:
         # Output filtered VCF and LD edge list
@@ -115,30 +61,29 @@ rule vcf_filtering_ld_estimation:
         > {log.out} 2> {log.err}
         """
 
-# Define the rule in Snakemake
-rule SLRfinder_execute:
+################################################
+## Rule: SLRfinder_main
+## Description: This rule runs the SLRfinder analysis on the filtered VCF files.
+################################################
+
+rule SLRfinder_main:
     input:
         "tmp/amphioxus/SLRfinder_scripts.R",
         "tmp/amphioxus/SLRfinder_functions.r"
     output:
-        "tmp/amphioxus/alldone.txt"
+        directory("tmp/amphioxus/LD8.5cl20")
     log:
-        err = "logs/SLRfinder/SLRfinder_execute.err",
-        out = "logs/SLRfinder/SLRfinder_execute.out"
+        err = "logs/SLRfinder/SLRfinder_main.err",
+        out = "logs/SLRfinder/SLRfinder_main.out"
     conda:
         '../envs/SLRfinder.yaml'
     resources:
-        mem_mb = 8000,
+        mem_mb = 16000,
         cpus_per_task = 1,
         threads = 1,
         runtime = "1h"
     shell:
         """
-        # Change to the appropriate working directory (dataset folder)
-        cd tmp/amphioxus 
-
-        # Run the R script
-        Rscript SLRfinder_scripts.R
-
-        echo "SLRfinder analysis completed." > {output}
+        cd tmp/amphioxus
+        Rscript SLRfinder_scripts.R > ./../../{log.out} 2> ./../../{log.err}
         """
