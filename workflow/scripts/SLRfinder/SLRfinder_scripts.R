@@ -28,11 +28,15 @@ dir.create(paste0("LD", min_LD*10, "cl", min.cl.size), showWarnings = FALSE)
 setwd(paste0("LD", min_LD*10, "cl", min.cl.size))
 dir.create("whitelist", showWarnings = FALSE)
 
+print("Loading LD data...")
+
 data_cls <- NULL
 
 for (i in 1:nrow(LG)) {
   chr = LG[i, "chr"]
   lg = LG[i, "lg"]
+
+  print(paste0("Processing chromosome ", chr, " (", lg, ")..."))
 
   ld_file = paste0("../GenoLD.snp100/", mydata, "_", lg, "_a15m75.geno.ld")
   if (!file.exists(ld_file)) {
@@ -71,11 +75,15 @@ saveRDS(data_cls, file = "data_cls.rds")
 # Step 2: Generate 012 matrices
 dir.create("file012", showWarnings = FALSE)
 
+print("Generating 012 matrices...")
+
 for (i in 1:nrow(LG)) {
   lg = LG[i, "lg"]
   whitelist_file = paste0("whitelist/position.", lg, ".list")
   vcf_file = paste0("../a15m75/", mydata, "_", lg, "_a15m75.recode.vcf")
   out_file = paste0("file012/", mydata, "_", lg, "_a15m75_LD", min_LD, "cl", min.cl.size)
+
+  print(paste0("Processing chromosome ", lg, "..."))
 
   if (file.exists(whitelist_file)) {
     cmd = paste(
@@ -186,6 +194,9 @@ print(ggplot(qq_data, aes(x = exp, y = obs)) +
         geom_smooth(method = "lm", col = "#ff9727", linewidth = 0.5))
 
 # Plot candidate regions
+
+print("Plotting candidate regions...")
+
 for (r in unique(PCA_het_data$region)) {
   pca = PCA_het_data[PCA_het_data$region == r, ]
   label = strsplit(unique(pca$label), " ")[[1]]

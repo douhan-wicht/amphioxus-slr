@@ -20,7 +20,7 @@
 rule vcf_filtering_ld_estimation:
     input:
         # The VCF files for each chromosome/contig and the reference list
-        vcf="data/subset/ShortVariants_HardCallableFiltered.{chromosomes}.vcf.gz",
+        vcf="data/raw/ShortVariants_HardCallableFiltered.{chromosomes}.vcf.gz", # Adapt path if you want to use the VCF subset
         reference="tmp/amphioxus/reference.list"
     output:
         # Output filtered VCF and LD edge list
@@ -69,7 +69,9 @@ rule vcf_filtering_ld_estimation:
 rule SLRfinder_main:
     input:
         "tmp/amphioxus/SLRfinder_scripts.R",
-        "tmp/amphioxus/SLRfinder_functions.r"
+        "tmp/amphioxus/SLRfinder_functions.r",
+        expand("tmp/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld", chromosomes=config["CHROMOSOMES"]),
+        expand("tmp/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"])
     output:
         directory("tmp/amphioxus/LD8.5cl20")
     log:
@@ -78,10 +80,10 @@ rule SLRfinder_main:
     conda:
         '../envs/SLRfinder.yaml'
     resources:
-        mem_mb = 16000,
+        mem_mb = 50000,
         cpus_per_task = 1,
         threads = 1,
-        runtime = "1h"
+        runtime = "50h"
     shell:
         """
         cd tmp/amphioxus
