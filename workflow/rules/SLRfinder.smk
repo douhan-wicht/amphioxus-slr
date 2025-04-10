@@ -83,7 +83,7 @@ rule SLRfinder_main:
         mem_mb = 50000,
         cpus_per_task = 1,
         threads = 1,
-        runtime = "50h"
+        runtime = "24h"
     shell:
         """
         cd tmp/amphioxus

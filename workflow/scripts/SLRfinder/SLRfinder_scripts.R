@@ -149,8 +149,9 @@ if (sex_info) {
   if (nrow(data_sex) > 0) {
     myindex = length(grep("_", data_sex[1, "chr"])) + 2
     data_sex[, region := apply(data_sex, 1, function(x) {
-      paste0(x$chr, ":", paste(range(as.numeric(strsplit(x$SNPs, "_", fixed = TRUE)[[1]][myindex])), collapse = "-"))
+      paste0(x$chr, ":", paste(range(as.numeric(do.call(rbind, strsplit(x$SNPs, "_", fixed = TRUE))[, myindex])), collapse = "-"))
     })]
+
 
     pdf(paste0(mydata, "_sexg.pdf"))
     for (i in 1:nrow(data_sex)) {
@@ -166,8 +167,9 @@ if (sex_info) {
     }
     dev.off()
 
-    write.csv(data_sex[, c("chr", "region", "Sex_g", "nSNPs", "Dext_mean", "R2", "chi2")],
-              "sex_filter.csv", row.names = FALSE)
+    non_list_cols <- names(which(sapply(data_sex, function(col) !is.list(col))))
+    data_sex_export <- data_sex[, ..non_list_cols]
+    write.csv(data_sex_export, "sex_filter.csv", row.names = FALSE)
   } else {
     print(paste0("No cluster passed sex_g ≤ ", sex_filter))
   }
