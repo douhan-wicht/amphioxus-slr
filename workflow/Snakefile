@@ -24,15 +24,30 @@ localrules: import_data, subset_vcf
 
 # Include the other rules
 include: "rules/setup.smk",
-include: "rules/SLRfinder.smk"
+include: "rules/SLRfinder.smk",
+include: "rules/plots.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
     input:
+        # Data
         "tmp/amphioxus/amphioxus.csv",
         "tmp/amphioxus/reference.list",
+        # Setup
         expand("tmp/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"]),
         expand("tmp/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld", chromosomes=config["CHROMOSOMES"]),
         "tmp/amphioxus/SLRfinder_scripts.R",
         "tmp/amphioxus/SLRfinder_functions.r",
-        "tmp/amphioxus/LD8.5cl20"
+        # SLRfinder
+        "tmp/amphioxus/LD8.5cl20",
+        # Plots
+        "results/plots/gene_region.pdf",
+        "results/plots/gene_region.png",
+        "results/plots/karyotype.png",
+        "results/plots/karyotype.pdf",
+        "results/plots/heterozygosity_plot.png",
+        "results/plots/heterozygosity_plot.pdf",
+        "results/plots/heterozygosity_raw.png",
+        "results/plots/heterozygosity_raw.pdf",
+        "results/plots/combined_view.png",
+        "results/plots/combined_view.pdf"

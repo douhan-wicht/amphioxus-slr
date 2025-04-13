@@ -1,0 +1,15 @@
+name: plots
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - matplotlib
+  - seaborn
+  - numpy
+  - pandas
+  - gatk4
+  - openjdk=11
+  - dna_features_viewer
+
