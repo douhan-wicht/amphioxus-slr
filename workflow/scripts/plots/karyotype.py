@@ -7,6 +7,11 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 
 # -----------------------------
+# COLORBLIND-FRIENDLY STYLE
+# -----------------------------
+sns.set(style="whitegrid", context="talk", palette="colorblind")
+
+# -----------------------------
 # ARGPARSE
 # -----------------------------
 parser = argparse.ArgumentParser(description="Plot karyotype of SLR regions colored by Sex_g")
@@ -55,9 +60,9 @@ y_spacing = 2
 yticks = []
 max_chr_length = max(chr_lengths.values())
 
-# Normalize color scale
+# Normalize color scale (colorblind-friendly palette)
 norm = Normalize(vmin=df['Sex_g'].min(), vmax=df['Sex_g'].max())
-cmap = cm.get_cmap('RdYlGn_r')
+cmap = cm.get_cmap('viridis')  # better for colorblind vision than RdYlGn
 
 # Plot chromosomes and regions
 for i, chr_name in enumerate(chromosomes):

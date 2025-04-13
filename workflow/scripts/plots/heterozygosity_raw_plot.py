@@ -1,7 +1,13 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
+
+# -----------------------------
+# COLORBLIND-FRIENDLY SETTINGS
+# -----------------------------
+sns.set(style="whitegrid", context="talk", palette="colorblind")
 
 # -----------------------------
 # ARGPARSE
@@ -54,10 +60,14 @@ male_het = df[male_inds].applymap(compute_heterozygosity).mean(axis=1)
 # -----------------------------
 # PLOTTING
 # -----------------------------
+cb_palette = sns.color_palette("colorblind")
+female_color = cb_palette[0]
+male_color = cb_palette[2]
+
 plt.figure(figsize=(14, 6))
-plt.scatter(positions, female_het, label="Females", color="blue", alpha=0.6, s=8)
-plt.scatter(positions, male_het, label="Males", color="green", alpha=0.6, s=8)
-plt.axvspan(args.region_start, args.region_end, color="red", alpha=0.2, label="Region of Interest")
+plt.scatter(positions, female_het, label="Females", color=female_color, alpha=0.6, s=8)
+plt.scatter(positions, male_het, label="Males", color=male_color, alpha=0.6, s=8)
+plt.axvspan(args.region_start, args.region_end, color=cb_palette[3], alpha=0.1, label="Region of Interest")
 
 plt.xlabel("Base Pair Position")
 plt.ylabel("Mean Heterozygosity")

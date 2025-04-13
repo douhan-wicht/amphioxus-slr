@@ -1,7 +1,13 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
+
+# -----------------------------
+# COLORBLIND-FRIENDLY SETTINGS
+# -----------------------------
+sns.set(style="whitegrid", context="talk", palette="colorblind")
 
 # -----------------------------
 # ARGPARSE
@@ -58,13 +64,22 @@ female_het_smooth = female_het.rolling(window=window_size, min_periods=1).mean()
 male_het_smooth = male_het.rolling(window=window_size, min_periods=1).mean()
 diff_het = female_het_smooth - male_het_smooth
 
-# Plot
+# -----------------------------
+# PLOTTING
+# -----------------------------
 plt.figure(figsize=(14, 7))
-plt.plot(positions, female_het_smooth, label="Females (smoothed)", color="blue")
-plt.plot(positions, male_het_smooth, label="Males (smoothed)", color="green")
-plt.plot(positions, diff_het, label="Females - Males", color="purple", linestyle="--")
 
-plt.axvspan(args.region_start, args.region_end, color="red", alpha=0.2, label="Region of Interest")
+# Use colorblind-friendly colors from seaborn's palette
+cb_palette = sns.color_palette("colorblind")
+female_color = cb_palette[0]
+male_color = cb_palette[2]
+diff_color = cb_palette[4]
+
+plt.plot(positions, female_het_smooth, label="Females (smoothed)", color=female_color)
+plt.plot(positions, male_het_smooth, label="Males (smoothed)", color=male_color)
+plt.plot(positions, diff_het, label="Females - Males", color=diff_color, linestyle="--")
+
+plt.axvspan(args.region_start, args.region_end, color=cb_palette[3], alpha=0.3, label="Region of Interest")
 
 plt.xlabel("Base Pair Position")
 plt.ylabel("Mean Heterozygosity")

@@ -1,8 +1,13 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+import seaborn as sns
 import matplotlib.patches as mpatches
+
+# -----------------------------
+# COLORBLIND-FRIENDLY STYLE
+# -----------------------------
+sns.set(style="whitegrid", context="talk", palette="colorblind")
 
 # -----------------------------
 # ARGPARSE
@@ -60,11 +65,11 @@ def extract_gene_name(attr):
 region["gene_name"] = region["attributes"].apply(extract_gene_name)
 
 # -----------------------------
-# PLOTTING (improved)
+# PLOTTING (Improved with colorblind-friendly colors)
 # -----------------------------
 fig, ax = plt.subplots(figsize=(12, 2.5))
 
-# Sort genes by start and assign "tracks" (stacking rows)
+# Sort genes by start and assign tracks (to avoid overlap)
 region_sorted = region.sort_values("start").reset_index(drop=True)
 region_sorted["track"] = 0
 track_ends = []
@@ -72,7 +77,7 @@ track_ends = []
 for i, row in region_sorted.iterrows():
     placed = False
     for track_idx, end_pos in enumerate(track_ends):
-        if row["start"] > end_pos + 1000:  # gap between genes
+        if row["start"] > end_pos + 1000:  # avoid overlaps
             region_sorted.at[i, "track"] = track_idx
             track_ends[track_idx] = row["end"]
             placed = True
@@ -81,19 +86,18 @@ for i, row in region_sorted.iterrows():
         region_sorted.at[i, "track"] = len(track_ends)
         track_ends.append(row["end"])
 
-# Plot baseline
+# Baseline
 ax.hlines(y=0, xmin=args.start, xmax=args.end, color="black", linewidth=2)
 
-# Plot each gene
+# Plot genes
 for _, row in region_sorted.iterrows():
     y = row["track"] * 0.5
     strand = row["strand"]
-    color = "steelblue" if strand == "+" else "indianred"
-    name = row["gene_name"][:20]  # shorten name if needed
+    name = row["gene_name"][:20]
     start = row["start"]
     end = row["end"]
+    color = "#0072B2" if strand == "+" else "#D55E00"  # colorblind-friendly blue/orange
 
-    # Draw gene body with arrow
     arrow = mpatches.FancyArrow(
         start if strand == "+" else end,
         y,
@@ -108,7 +112,6 @@ for _, row in region_sorted.iterrows():
     )
     ax.add_patch(arrow)
 
-    # Add label
     ax.text((start + end) / 2, y + 0.2, name,
             ha="center", va="bottom", fontsize=7, rotation=0)
 

@@ -2,7 +2,18 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 import matplotlib.patches as mpatches
+
+# -----------------------------
+# STYLE SETUP
+# -----------------------------
+sns.set(style="whitegrid", context="talk", palette="colorblind")
+colors = sns.color_palette("colorblind")
+female_color = colors[0]   # blue-ish
+male_color = colors[2]     # green-ish
+diff_color = colors[4]     # purple-ish
+region_color = colors[3]   # red-ish
 
 # -----------------------------
 # ARGPARSE
@@ -20,7 +31,7 @@ parser.add_argument("--out_pdf", required=True, help="Output PDF path")
 args = parser.parse_args()
 
 # -----------------------------
-# LOAD VCF-TAB & GFF
+# LOAD DATA
 # -----------------------------
 df = pd.read_csv(args.vcf_tab, sep="\t")
 
@@ -28,7 +39,7 @@ col_names = ["seqid", "source", "type", "start", "end", "score", "strand", "phas
 gff = pd.read_csv(args.gff, sep="\t", comment="#", names=col_names)
 
 # -----------------------------
-# Helper functions
+# HELPER FUNCTIONS
 # -----------------------------
 def compute_heterozygosity(gt):
     if not isinstance(gt, str) or gt in ("./.", ".|."):
@@ -58,7 +69,7 @@ def extract_gene_name(attr):
     return "unknown"
 
 # -----------------------------
-# HETEROZYGOSITY DATA
+# HETEROZYGOSITY
 # -----------------------------
 gt_columns = [col for col in df.columns if col.endswith(".GT")]
 sex_map = {col: infer_sex(col) for col in gt_columns}
@@ -76,7 +87,7 @@ male_het_smooth = male_het.rolling(window=window_size, min_periods=1).mean()
 diff_het = female_het_smooth - male_het_smooth
 
 # -----------------------------
-# GENE ANNOTATION DATA
+# GENE ANNOTATIONS
 # -----------------------------
 valid_types = ["gene", "mRNA", "transcript"]
 region = gff[
@@ -87,7 +98,6 @@ region = gff[
 ].copy()
 
 region["gene_name"] = region["attributes"].apply(extract_gene_name)
-
 region_sorted = region.sort_values("start").reset_index(drop=True)
 region_sorted["track"] = 0
 track_ends = []
@@ -105,28 +115,28 @@ for i, row in region_sorted.iterrows():
         track_ends.append(row["end"])
 
 # -----------------------------
-# PLOT
+# PLOTTING
 # -----------------------------
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 9), height_ratios=[3, 1], sharex=True)
 
-# --- Plot 1: Heterozygosity ---
-ax1.plot(positions, female_het_smooth, label="Females (smoothed)", color="blue")
-ax1.plot(positions, male_het_smooth, label="Males (smoothed)", color="green")
-ax1.plot(positions, diff_het, label="Females - Males", color="purple", linestyle="--")
-ax1.axvspan(args.region_start, args.region_end, color="red", alpha=0.2, label="Region of Interest")
+# --- Heterozygosity Plot ---
+ax1.plot(positions, female_het_smooth, label="Females (smoothed)", color=female_color)
+ax1.plot(positions, male_het_smooth, label="Males (smoothed)", color=male_color)
+ax1.plot(positions, diff_het, label="Females - Males", color=diff_color, linestyle="--")
+ax1.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.2, label="Region of Interest")
 
 ax1.set_ylabel("Mean Heterozygosity")
 ax1.set_title("Smoothed Heterozygosity by Sex Across Genomic Region")
 ax1.legend()
 ax1.grid(True)
 
-# --- Plot 2: Genes ---
-ax2.axvspan(args.region_start, args.region_end, color="red", alpha=0.2)
+# --- Gene Annotation Track ---
+ax2.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.2)
 
 for _, row in region_sorted.iterrows():
     y = row["track"] * 0.5
     strand = row["strand"]
-    color = "steelblue" if strand == "+" else "indianred"
+    color = female_color if strand == "+" else male_color  # arbitrary use of distinct palette colors
     name = row["gene_name"][:20]
     start = row["start"]
     end = row["end"]
@@ -151,7 +161,7 @@ ax2.set_yticks([])
 ax2.set_xlabel("Base Pair Position (bp)")
 ax2.set_title(f"Genes in {args.seqid}:{args.region_start}-{args.region_end}")
 
-# Set X-axis range for both plots
+# Shared X range
 x_min = args.region_start - 5000
 x_max = args.region_end + 5000
 ax1.set_xlim(x_min, x_max)
