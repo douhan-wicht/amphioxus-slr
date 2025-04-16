@@ -1,4 +1,4 @@
-name: plots
+name: go
 channels:
   - conda-forge
   - bioconda
@@ -9,7 +9,5 @@ dependencies:
   - seaborn
   - numpy
   - pandas
-  - gatk4
-  - openjdk=11
-  - dna_features_viewer
-  - scipy
+  - gawk
+

@@ -93,19 +93,47 @@ rule gene_region_plot:
 ## Description: Convert VCF to tabular format using GATK VariantsToTable.
 ################################################
 
+# rule vcf_to_tab:
+#     """
+#     Convert VCF to tabular format using GATK VariantsToTable.
+#     """
+#     input:
+#         vcf = "tmp/amphioxus/a15m75/amphioxus_chr4_a15m75.recode.vcf"
+#     output:
+#         tab = "tmp/amphioxus/amphioxus_chr4.tab"
+#     log:
+#         out = "logs/plots/vcf_to_tab.out",
+#         err = "logs/plots/vcf_to_tab.err"
+#     conda:
+#         "../envs/plots.yaml"
+#     shell:
+#         """
+#         gatk VariantsToTable \
+#             -V {input.vcf} \
+#             -O {output.tab} \
+#             -F CHROM -F POS -F REF -F ALT \
+#             -GF GT \
+#             > {log.out} 2> {log.err}
+#         """
+
 rule vcf_to_tab:
     """
-    Convert VCF to tabular format using GATK VariantsToTable.
+    Convert VCF to tabular format using GATK VariantsToTable for each chromosome.
     """
     input:
-        vcf = "tmp/amphioxus/a15m75/amphioxus_chr4_a15m75.recode.vcf"
+        vcf = "tmp/amphioxus/a15m75/amphioxus_{chrom}_a15m75.recode.vcf"
     output:
-        tab = "tmp/amphioxus/amphioxus_chr4.tab"
+        tab = "tmp/amphioxus/amphioxus_{chrom}.tab"
     log:
-        out = "logs/plots/vcf_to_tab.out",
-        err = "logs/plots/vcf_to_tab.err"
+        out = "logs/plots/vcf_to_tab_{chrom}.out",
+        err = "logs/plots/vcf_to_tab_{chrom}.err"
     conda:
         "../envs/plots.yaml"
+    resources:
+        mem_mb = 8000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "20m"
     shell:
         """
         gatk VariantsToTable \
@@ -114,6 +142,21 @@ rule vcf_to_tab:
             -F CHROM -F POS -F REF -F ALT \
             -GF GT \
             > {log.out} 2> {log.err}
+        """
+
+rule concat_tabs:
+    input:
+        tabs = expand("tmp/amphioxus/amphioxus_{chrom}.tab", chrom=config["CHROMOSOMES"])
+    output:
+        combined = "tmp/amphioxus/amphioxus_all.tab"
+    log:
+        out = "logs/plots/concat_tabs.out",
+        err = "logs/plots/concat_tabs.err"
+    shell:
+        """
+        head -n 1 {input.tabs[0]} > {output.combined}
+        tail -n +2 -q {input.tabs} >> {output.combined}
+        > {log.out} 2> {log.err}
         """
 
 ################################################
@@ -214,6 +257,87 @@ rule combined_heterozygosity_gene_plot:
             --seqid {params.seqid} \
             --region_start {params.region_start} \
             --region_end {params.region_end} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            > {log.out} 2> {log.err}
+        """
+
+################################################
+## Rule: manhattan_plot
+## Description: Create a Manhattan plot for LD clusters using Sex_g metric.
+################################################
+
+rule manhattan_sexg_plot:
+    """
+    Create a Manhattan plot for LD clusters using Sex_g metric.
+    """
+    input:
+        candidates = "tmp/amphioxus/LD8.5cl20/candidates.csv"
+    output:
+        png = "results/plots/manhattan_sexg.png",
+        pdf = "results/plots/manhattan_sexg.pdf"
+    log:
+        out = "logs/plots/manhattan_sexg_plot.out",
+        err = "logs/plots/manhattan_sexg_plot.err"
+    conda:
+        "../envs/plots.yaml"
+    shell:
+        """
+        python workflow/scripts/plots/manhattan_sexg_plot.py \
+            --input {input.candidates} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            > {log.out} 2> {log.err}
+        """
+
+################################################
+## Rule: manhattan_gc_adj_plot
+## Description: Create a Manhattan plot for LD clusters using p_gc_adj metrics.
+################################################
+
+rule manhattan_gc_adj_plot:
+    input:
+        csv = "tmp/amphioxus/LD8.5cl20/candidates.csv"
+    output:
+        png = "results/plots/manhattan_gc_adj.png",
+        pdf = "results/plots/manhattan_gc_adj.pdf"
+    log:
+        out = "logs/plots/manhattan_gc_adj_plot.out",
+        err = "logs/plots/manhattan_gc_adj_plot.err"
+    conda:
+        "../envs/plots.yaml"
+    shell:
+        """
+        python workflow/scripts/plots/manhattan_gc_adj_plot.py \
+            --input {input.csv} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            > {log.out} 2> {log.err}
+        """
+
+rule manhattan_snp_plot:
+    """
+    Plot a Manhattan plot of sex-specific SNP association using genotype table.
+    """
+    input:
+        tab = "tmp/amphioxus/amphioxus_all.tab"
+    output:
+        png = "results/plots/manhattan_snp.png",
+        pdf = "results/plots/manhattan_snp.pdf"
+    log:
+        out = "logs/plots/manhattan_snp.out",
+        err = "logs/plots/manhattan_snp.err"
+    conda:
+        "../envs/plots.yaml"
+    resources:
+        mem_mb = 16000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "2h"
+    shell:
+        """
+        python workflow/scripts/plots/manhattan_snp_plot.py \
+            --input {input.tab} \
             --out_png {output.png} \
             --out_pdf {output.pdf} \
             > {log.out} 2> {log.err}

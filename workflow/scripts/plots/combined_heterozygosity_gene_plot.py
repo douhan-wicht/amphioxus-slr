@@ -163,7 +163,7 @@ ax2.set_title(f"Genes in {args.seqid}:{args.region_start}-{args.region_end}")
 
 # Shared X range
 x_min = args.region_start - 5000
-x_max = args.region_end + 5000
+x_max = args.region_end + 100000
 ax1.set_xlim(x_min, x_max)
 ax2.set_xlim(x_min, x_max)
 

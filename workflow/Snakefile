@@ -25,7 +25,8 @@ localrules: import_data, subset_vcf
 # Include the other rules
 include: "rules/setup.smk",
 include: "rules/SLRfinder.smk",
-include: "rules/plots.smk"
+include: "rules/plots.smk",
+include: "rules/go.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
@@ -50,4 +51,12 @@ rule all:
         "results/plots/heterozygosity_raw.png",
         "results/plots/heterozygosity_raw.pdf",
         "results/plots/combined_view.png",
-        "results/plots/combined_view.pdf"
+        "results/plots/combined_view.pdf",
+        "results/plots/manhattan_sexg.png",
+        "results/plots/manhattan_sexg.pdf",
+        "results/plots/manhattan_gc_adj.png",
+        "results/plots/manhattan_gc_adj.pdf",
+        "results/plots/manhattan_snp.png",
+        "results/plots/manhattan_snp.pdf",
+        "data/annotation/all_genes.txt",
+        "results/go/genes_in_region.txt"
