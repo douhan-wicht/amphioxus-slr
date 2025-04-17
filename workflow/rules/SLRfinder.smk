@@ -50,7 +50,7 @@ rule vcf_filtering_ld_estimation:
         mkdir -p tmp/amphioxus/GenoLD.snp100
 
         # Step 1: SNP filtering using bcftools and vcftools
-        bcftools view -m2 -M2 -v snps --min-ac={params.min_ac} {input.vcf} \
+        bcftools view -m2 -M2 -v snps -i 'FILTER="PASS"' --min-ac={params.min_ac} {input.vcf} \
         | vcftools --vcf - --minGQ {params.min_gq} --minQ {params.min_q} --maf {params.maf} --max-missing {params.max_missing} \
         --recode --recode-INFO-all --out tmp/amphioxus/a15m75/amphioxus_{wildcards.chromosomes}_a15m75 \
         > {log.out} 2> {log.err}
@@ -73,7 +73,9 @@ rule SLRfinder_main:
         expand("tmp/amphioxus/GenoLD.snp100/amphioxus_{chromosomes}_a15m75.geno.ld", chromosomes=config["CHROMOSOMES"]),
         expand("tmp/amphioxus/a15m75/amphioxus_{chromosomes}_a15m75.recode.vcf", chromosomes=config["CHROMOSOMES"])
     output:
-        directory("tmp/amphioxus/LD8.5cl20")
+        directory("tmp/amphioxus/LD8.5cl20"),
+        "tmp/amphioxus/LD8.5cl20/candidates.csv",
+        "tmp/amphioxus/LD8.5cl20/sex_filter.csv"
     log:
         err = "logs/SLRfinder/SLRfinder_main.err",
         out = "logs/SLRfinder/SLRfinder_main.out"

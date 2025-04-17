@@ -171,8 +171,8 @@ get_candidate_regions <- function(data_out, ranks=c("Dext_var_rank", "R2_rank","
   candidates <- data_out[which(p_gc_adj<alpha),]
   if(nrow(candidates) == 0){
     print("No candidates found! Report the top 5 ranked LD clusters.")
-    if(nrow(data_out) < 5){ candidates <- data_out  }
-    if(nrow(data_out) >= 5){ candidates <- data_out[1:5,] } 
+    if(nrow(data_out) < 1001){ candidates <- data_out  }
+    if(nrow(data_out) >= 1000){ candidates <- data_out[1:1000,] } 
   } 
   
   myindex = length(grep("_", candidates[1, "chr"])) + 2

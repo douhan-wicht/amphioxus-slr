@@ -65,7 +65,7 @@ rule gene_region_plot:
     params:
         seqid = "OV696689.1",
         start = 6142346,
-        end = 6164195
+        end = 6177987
     log:
         out = "logs/plots/gene_region.out",
         err = "logs/plots/gene_region.err"
@@ -180,7 +180,7 @@ rule heterozygosity_plot:
         "../envs/plots.yaml"
     params:
         region_start = 6142346,
-        region_end = 6164195
+        region_end = 6177987
     shell:
         """
         python workflow/scripts/plots/heterozygosity_plot.py \
@@ -213,7 +213,7 @@ rule heterozygosity_raw_plot:
         "../envs/plots.yaml"
     params:
         region_start = 6142346,
-        region_end = 6164195
+        region_end = 6177987
     shell:
         """
         python workflow/scripts/plots/heterozygosity_raw_plot.py \
@@ -248,7 +248,7 @@ rule combined_heterozygosity_gene_plot:
     params:
         seqid = "OV696689.1",
         region_start = 6142346,
-        region_end = 6164195
+        region_end = 6177987
     shell:
         """
         python workflow/scripts/plots/combined_heterozygosity_gene_plot.py \
