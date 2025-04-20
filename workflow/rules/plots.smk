@@ -26,8 +26,9 @@ rule karyotype:
         candidates = "tmp/amphioxus/LD8.5cl20/candidates.csv",
         sex_filter = "tmp/amphioxus/LD8.5cl20/sex_filter.csv"
     output:
-        "results/plots/karyotype.png",
-        "results/plots/karyotype.pdf"
+        png = "results/plots/karyotype.png",
+        pdf = "results/plots/karyotype.pdf",
+        svg = "results/plots/karyotype.svg"
     log:
         err = "logs/plots/karyotype.err",
         out = "logs/plots/karyotype.out"
@@ -43,8 +44,9 @@ rule karyotype:
         python workflow/scripts/plots/karyotype.py \
             --candidates {input.candidates} \
             --sex_filter {input.sex_filter} \
-            --out_png {output[0]} \
-            --out_pdf {output[1]} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             > {log.out} 2> {log.err}
         """
 
@@ -60,8 +62,9 @@ rule gene_region_plot:
     input:
         gff = "data/annotation/genomic.gff"
     output:
-        "results/plots/gene_region.png",
-        "results/plots/gene_region.pdf"
+        png = "results/plots/gene_region.png",
+        pdf = "results/plots/gene_region.pdf",
+        svg = "results/plots/gene_region.svg"
     params:
         seqid = "OV696689.1",
         start = 6142346,
@@ -83,8 +86,9 @@ rule gene_region_plot:
             --seqid {params.seqid} \
             --start {params.start} \
             --end {params.end} \
-            --out_png {output[0]} \
-            --out_pdf {output[1]} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             > {log.out} 2> {log.err}
         """
 
@@ -172,7 +176,8 @@ rule heterozygosity_plot:
         tab = "tmp/amphioxus/amphioxus_chr4.tab"
     output:
         png = "results/plots/heterozygosity_plot.png",
-        pdf = "results/plots/heterozygosity_plot.pdf"
+        pdf = "results/plots/heterozygosity_plot.pdf",
+        svg = "results/plots/heterozygosity_plot.svg"
     log:
         out = "logs/plots/heterozygosity_plot.out",
         err = "logs/plots/heterozygosity_plot.err"
@@ -187,6 +192,7 @@ rule heterozygosity_plot:
             --input {input.tab} \
             --out_png {output.png} \
             --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             --region_start {params.region_start} \
             --region_end {params.region_end} \
             > {log.out} 2> {log.err}
@@ -205,7 +211,8 @@ rule heterozygosity_raw_plot:
         tab = "tmp/amphioxus/amphioxus_chr4.tab"
     output:
         png = "results/plots/heterozygosity_raw.png",
-        pdf = "results/plots/heterozygosity_raw.pdf"
+        pdf = "results/plots/heterozygosity_raw.pdf",
+        svg = "results/plots/heterozygosity_raw.svg"
     log:
         out = "logs/plots/heterozygosity_raw_plot.out",
         err = "logs/plots/heterozygosity_raw_plot.err"
@@ -220,6 +227,7 @@ rule heterozygosity_raw_plot:
             --input {input.tab} \
             --out_png {output.png} \
             --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             --region_start {params.region_start} \
             --region_end {params.region_end} \
             > {log.out} 2> {log.err}
@@ -239,7 +247,8 @@ rule combined_heterozygosity_gene_plot:
         gff = "data/annotation/genomic.gff"
     output:
         png = "results/plots/combined_view.png",
-        pdf = "results/plots/combined_view.pdf"
+        pdf = "results/plots/combined_view.pdf",
+        svg = "results/plots/combined_view.svg"
     log:
         out = "logs/plots/combined_plot.out",
         err = "logs/plots/combined_plot.err"
@@ -259,6 +268,7 @@ rule combined_heterozygosity_gene_plot:
             --region_end {params.region_end} \
             --out_png {output.png} \
             --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             > {log.out} 2> {log.err}
         """
 
@@ -275,7 +285,8 @@ rule manhattan_sexg_plot:
         candidates = "tmp/amphioxus/LD8.5cl20/candidates.csv"
     output:
         png = "results/plots/manhattan_sexg.png",
-        pdf = "results/plots/manhattan_sexg.pdf"
+        pdf = "results/plots/manhattan_sexg.pdf",
+        svg = "results/plots/manhattan_sexg.svg"
     log:
         out = "logs/plots/manhattan_sexg_plot.out",
         err = "logs/plots/manhattan_sexg_plot.err"
@@ -287,6 +298,7 @@ rule manhattan_sexg_plot:
             --input {input.candidates} \
             --out_png {output.png} \
             --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             > {log.out} 2> {log.err}
         """
 
@@ -300,7 +312,8 @@ rule manhattan_gc_adj_plot:
         csv = "tmp/amphioxus/LD8.5cl20/candidates.csv"
     output:
         png = "results/plots/manhattan_gc_adj.png",
-        pdf = "results/plots/manhattan_gc_adj.pdf"
+        pdf = "results/plots/manhattan_gc_adj.pdf",
+        svg = "results/plots/manhattan_gc_adj.svg"
     log:
         out = "logs/plots/manhattan_gc_adj_plot.out",
         err = "logs/plots/manhattan_gc_adj_plot.err"
@@ -312,6 +325,7 @@ rule manhattan_gc_adj_plot:
             --input {input.csv} \
             --out_png {output.png} \
             --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             > {log.out} 2> {log.err}
         """
 
@@ -323,7 +337,8 @@ rule manhattan_snp_plot:
         tab = "tmp/amphioxus/amphioxus_all.tab"
     output:
         png = "results/plots/manhattan_snp.png",
-        pdf = "results/plots/manhattan_snp.pdf"
+        pdf = "results/plots/manhattan_snp.pdf",
+        svg = "results/plots/manhattan_snp.svg"
     log:
         out = "logs/plots/manhattan_snp.out",
         err = "logs/plots/manhattan_snp.err"
@@ -340,5 +355,55 @@ rule manhattan_snp_plot:
             --input {input.tab} \
             --out_png {output.png} \
             --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
             > {log.out} 2> {log.err}
+        """
+
+rule figure_2:
+    """
+    Combine smoothed heterozygosity plot with gene annotation track into one figure.
+    """
+    input:
+        vcf_tab = "tmp/amphioxus/amphioxus_chr4.tab",
+        gff = "data/annotation/genomic.gff"
+    output:
+        png = "results/plots/figure_2.png",
+        pdf = "results/plots/figure_2.pdf",
+        svg = "results/plots/figure_2.svg"
+    log:
+        out = "logs/plots/figure_2.out",
+        err = "logs/plots/figure_2.err"
+    conda:
+        "../envs/plots.yaml"
+    params:
+        seqid = "OV696689.1",
+        region_start = 6142346,
+        region_end = 6177987
+    shell:
+        """
+        python workflow/scripts/plots/figure_2.py \
+            --vcf_tab {input.vcf_tab} \
+            --gff {input.gff} \
+            --seqid {params.seqid} \
+            --region_start {params.region_start} \
+            --region_end {params.region_end} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
+            > {log.out} 2> {log.err}
+        """
+
+rule generate_combined_legend:
+    output:
+        png = "results/plots/legend_only.png",
+        pdf = "results/plots/legend_only.pdf",
+        svg = "results/plots/legend_only.svg"
+    conda:
+        "../envs/plots.yaml"
+    shell:
+        """
+        python workflow/scripts/plots/generate_combined_legend.py \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg}
         """

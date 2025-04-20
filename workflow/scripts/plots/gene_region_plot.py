@@ -8,6 +8,8 @@ import matplotlib.patches as mpatches
 # COLORBLIND-FRIENDLY STYLE
 # -----------------------------
 sns.set(style="whitegrid", context="talk", palette="colorblind")
+palette = sns.color_palette("colorblind")
+arrow_color = palette[0]  # Index 0: blue
 
 # -----------------------------
 # ARGPARSE
@@ -20,26 +22,20 @@ parser.add_argument("--start", type=int, required=True, help="Start coordinate o
 parser.add_argument("--end", type=int, required=True, help="End coordinate of region")
 parser.add_argument("--out_png", required=True, help="Output PNG path")
 parser.add_argument("--out_pdf", required=True, help="Output PDF path")
+parser.add_argument("--out_svg", required=True, help="Output SVG path")
 
 args = parser.parse_args()
 
 # -----------------------------
-# LOAD AND INSPECT GFF
+# LOAD GFF
 # -----------------------------
 col_names = ["seqid", "source", "type", "start", "end", "score", "strand", "phase", "attributes"]
 gff = pd.read_csv(args.gff, sep="\t", comment="#", names=col_names)
 
-# Debug output
-print("\n🧬 DEBUG INFO")
-print("Unique seqids in GFF:", gff["seqid"].unique())
-print(f"Feature count on {args.seqid}:", (gff["seqid"] == args.seqid).sum())
-print(f"Feature types on {args.seqid}:\n", gff[gff["seqid"] == args.seqid]["type"].value_counts())
-print(f"First few entries on {args.seqid}:\n", gff[gff["seqid"] == args.seqid].head())
-
 # -----------------------------
-# FILTER REGION & FEATURES
+# FILTER GENE FEATURES IN REGION
 # -----------------------------
-valid_types = ["gene", "mRNA", "transcript"]
+valid_types = ["gene"]
 region = gff[
     (gff["seqid"] == args.seqid) &
     (gff["type"].isin(valid_types)) &
@@ -47,12 +43,10 @@ region = gff[
     (gff["end"] >= args.start)
 ].copy()
 
-print(f"\n🧬 Number of features in region {args.seqid}:{args.start}-{args.end}:", len(region))
-
 # -----------------------------
-# PARSE GENE NAMES
+# EXTRACT GENE IDS
 # -----------------------------
-def extract_gene_name(attr):
+def extract_gene_id(attr):
     for field in attr.split(";"):
         if "Name=" in field:
             return field.split("Name=")[-1]
@@ -62,14 +56,23 @@ def extract_gene_name(attr):
             return field.split("ID=")[-1]
     return "unknown"
 
-region["gene_name"] = region["attributes"].apply(extract_gene_name)
+region["gene_id"] = region["attributes"].apply(extract_gene_id)
 
 # -----------------------------
-# PLOTTING (Improved with colorblind-friendly colors)
+# MANUAL GENE LABELS
+# -----------------------------
+label_dict = {
+    "BLAG_LOCUS17194": "HAO1",
+    "BLAG_LOCUS17195": "FLT1"
+}
+region["gene_label"] = region["gene_id"].apply(lambda gid: label_dict.get(gid, gid))
+
+# -----------------------------
+# PLOTTING
 # -----------------------------
 fig, ax = plt.subplots(figsize=(12, 2.5))
 
-# Sort genes by start and assign tracks (to avoid overlap)
+# Assign tracks to avoid overlapping
 region_sorted = region.sort_values("start").reset_index(drop=True)
 region_sorted["track"] = 0
 track_ends = []
@@ -77,7 +80,7 @@ track_ends = []
 for i, row in region_sorted.iterrows():
     placed = False
     for track_idx, end_pos in enumerate(track_ends):
-        if row["start"] > end_pos + 1000:  # avoid overlaps
+        if row["start"] > end_pos + 1000:
             region_sorted.at[i, "track"] = track_idx
             track_ends[track_idx] = row["end"]
             placed = True
@@ -86,17 +89,16 @@ for i, row in region_sorted.iterrows():
         region_sorted.at[i, "track"] = len(track_ends)
         track_ends.append(row["end"])
 
-# Baseline
+# Draw baseline
 ax.hlines(y=0, xmin=args.start, xmax=args.end, color="black", linewidth=2)
 
-# Plot genes
+# Draw gene arrows
 for _, row in region_sorted.iterrows():
     y = row["track"] * 0.5
     strand = row["strand"]
-    name = row["gene_name"][:20]
+    name = row["gene_label"][:20]
     start = row["start"]
     end = row["end"]
-    color = "#0072B2" if strand == "+" else "#D55E00"  # colorblind-friendly blue/orange
 
     arrow = mpatches.FancyArrow(
         start if strand == "+" else end,
@@ -107,7 +109,7 @@ for _, row in region_sorted.iterrows():
         length_includes_head=True,
         head_width=0.2,
         head_length=500,
-        color=color,
+        color=arrow_color,
         alpha=0.9
     )
     ax.add_patch(arrow)
@@ -115,7 +117,7 @@ for _, row in region_sorted.iterrows():
     ax.text((start + end) / 2, y + 0.2, name,
             ha="center", va="bottom", fontsize=7, rotation=0)
 
-# Layout
+# Final layout
 ax.set_xlim(args.start, args.end)
 ax.set_ylim(-0.5, max(region_sorted["track"]) * 0.6 + 1)
 ax.set_yticks([])
@@ -125,3 +127,4 @@ ax.set_title(f"Genes in {args.seqid}:{args.start}-{args.end}", fontsize=12, weig
 plt.tight_layout()
 plt.savefig(args.out_png)
 plt.savefig(args.out_pdf)
+plt.savefig(args.out_svg)

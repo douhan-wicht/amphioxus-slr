@@ -20,6 +20,7 @@ parser.add_argument("--candidates", required=True, help="Path to candidates.csv"
 parser.add_argument("--sex_filter", required=True, help="Path to sex_filter.csv")
 parser.add_argument("--out_png", required=True, help="Output PNG path")
 parser.add_argument("--out_pdf", required=True, help="Output PDF path")
+parser.add_argument("--out_svg", required=True, help="Output SVG path")
 
 args = parser.parse_args()
 
@@ -104,3 +105,4 @@ cbar.set_label("Sex_g (misgrouping proportion)", fontsize=10)
 plt.tight_layout()
 plt.savefig(args.out_png)
 plt.savefig(args.out_pdf)
+plt.savefig(args.out_svg)

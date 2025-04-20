@@ -11,9 +11,10 @@ import matplotlib.patches as mpatches
 sns.set(style="whitegrid", context="talk", palette="colorblind")
 colors = sns.color_palette("colorblind")
 female_color = colors[0]   # blue-ish
-male_color = colors[2]     # green-ish
-diff_color = colors[4]     # purple-ish
-region_color = colors[3]   # red-ish
+male_color = colors[3]     # green-ish
+diff_color = colors[2]     # purple-ish
+region_color = colors[6]   # red-ish
+arrow_color = colors[0]    # blue from seaborn (index 0)
 
 # -----------------------------
 # ARGPARSE
@@ -27,6 +28,7 @@ parser.add_argument("--region_start", type=int, required=True, help="Start coord
 parser.add_argument("--region_end", type=int, required=True, help="End coordinate of region")
 parser.add_argument("--out_png", required=True, help="Output PNG path")
 parser.add_argument("--out_pdf", required=True, help="Output PDF path")
+parser.add_argument("--out_svg", required=True, help="Output SVG path")
 
 args = parser.parse_args()
 
@@ -58,7 +60,7 @@ def infer_sex(name):
     else:
         return "U"
 
-def extract_gene_name(attr):
+def extract_gene_id(attr):
     for field in attr.split(";"):
         if "Name=" in field:
             return field.split("Name=")[-1]
@@ -87,9 +89,9 @@ male_het_smooth = male_het.rolling(window=window_size, min_periods=1).mean()
 diff_het = female_het_smooth - male_het_smooth
 
 # -----------------------------
-# GENE ANNOTATIONS
+# GENE ANNOTATIONS (genes only)
 # -----------------------------
-valid_types = ["gene", "mRNA", "transcript"]
+valid_types = ["gene"]
 region = gff[
     (gff["seqid"] == args.seqid) &
     (gff["type"].isin(valid_types)) &
@@ -97,7 +99,16 @@ region = gff[
     (gff["end"] >= args.region_start)
 ].copy()
 
-region["gene_name"] = region["attributes"].apply(extract_gene_name)
+region["gene_id"] = region["attributes"].apply(extract_gene_id)
+
+# Custom labeling for specific gene IDs
+label_dict = {
+    "gene-BLAG_LOCUS17194": "HAO1",
+    "gene-BLAG_LOCUS17195": "FLT1"
+}
+region["gene_label"] = region["gene_id"].apply(lambda gid: label_dict.get(gid, gid))
+
+# Assign non-overlapping tracks
 region_sorted = region.sort_values("start").reset_index(drop=True)
 region_sorted["track"] = 0
 track_ends = []
@@ -120,14 +131,13 @@ for i, row in region_sorted.iterrows():
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 9), height_ratios=[3, 1], sharex=True)
 
 # --- Heterozygosity Plot ---
-ax1.plot(positions, female_het_smooth, label="Females (smoothed)", color=female_color)
-ax1.plot(positions, male_het_smooth, label="Males (smoothed)", color=male_color)
+ax1.plot(positions, female_het_smooth, label="Females", color=female_color)
+ax1.plot(positions, male_het_smooth, label="Males", color=male_color)
 ax1.plot(positions, diff_het, label="Females - Males", color=diff_color, linestyle="--")
 ax1.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.2, label="Region of Interest")
 
 ax1.set_ylabel("Mean Heterozygosity")
 ax1.set_title("Smoothed Heterozygosity by Sex Across Genomic Region")
-ax1.legend()
 ax1.grid(True)
 
 # --- Gene Annotation Track ---
@@ -136,8 +146,7 @@ ax2.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.2)
 for _, row in region_sorted.iterrows():
     y = row["track"] * 0.5
     strand = row["strand"]
-    color = female_color if strand == "+" else male_color  # arbitrary use of distinct palette colors
-    name = row["gene_name"][:20]
+    name = row["gene_label"][:20]
     start = row["start"]
     end = row["end"]
 
@@ -150,7 +159,7 @@ for _, row in region_sorted.iterrows():
         length_includes_head=True,
         head_width=0.2,
         head_length=500,
-        color=color,
+        color=arrow_color,
         alpha=0.9
     )
     ax2.add_patch(arrow)
@@ -159,14 +168,14 @@ for _, row in region_sorted.iterrows():
 ax2.set_ylim(-0.5, max(region_sorted["track"]) * 0.6 + 1)
 ax2.set_yticks([])
 ax2.set_xlabel("Base Pair Position (bp)")
-ax2.set_title(f"Genes in {args.seqid}:{args.region_start}-{args.region_end}")
 
 # Shared X range
 x_min = args.region_start - 5000
-x_max = args.region_end + 100000
+x_max = args.region_end + 25000
 ax1.set_xlim(x_min, x_max)
 ax2.set_xlim(x_min, x_max)
 
 plt.tight_layout()
 plt.savefig(args.out_png)
 plt.savefig(args.out_pdf)
+plt.savefig(args.out_svg)

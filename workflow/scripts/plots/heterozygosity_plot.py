@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser(description="Plot smoothed heterozygosity by se
 parser.add_argument("--input", required=True, help="Input .tab file with genotypes")
 parser.add_argument("--out_png", required=True, help="Output PNG path")
 parser.add_argument("--out_pdf", required=True, help="Output PDF path")
+parser.add_argument("--out_svg", required=True, help="Output SVG path")
 parser.add_argument("--region_start", type=int, default=6142346, help="Start of region of interest")
 parser.add_argument("--region_end", type=int, default=6164195, help="End of region of interest")
 
@@ -72,21 +73,22 @@ plt.figure(figsize=(14, 7))
 # Use colorblind-friendly colors from seaborn's palette
 cb_palette = sns.color_palette("colorblind")
 female_color = cb_palette[0]
-male_color = cb_palette[2]
-diff_color = cb_palette[4]
+male_color = cb_palette[3]
+diff_color = cb_palette[2]
 
 plt.plot(positions, female_het_smooth, label="Females (smoothed)", color=female_color)
 plt.plot(positions, male_het_smooth, label="Males (smoothed)", color=male_color)
 plt.plot(positions, diff_het, label="Females - Males", color=diff_color, linestyle="--")
 
-plt.axvspan(args.region_start, args.region_end, color=cb_palette[3], alpha=0.3, label="Region of Interest")
+plt.axvspan(args.region_start, args.region_end, color=cb_palette[6], alpha=0.3, label="Region of Interest")
 
 plt.xlabel("Base Pair Position")
 plt.ylabel("Mean Heterozygosity")
 plt.title("Smoothed Heterozygosity by Sex Across Genomic Region")
 plt.grid(True)
 plt.legend()
-plt.xlim(args.region_start - 5000, args.region_end + 5000)
+plt.xlim(args.region_start - 5000, args.region_end + 50000)
 plt.tight_layout()
 plt.savefig(args.out_png)
 plt.savefig(args.out_pdf)
+plt.savefig(args.out_svg)

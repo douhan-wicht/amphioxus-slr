@@ -13,3 +13,4 @@ dependencies:
   - openjdk=11
   - dna_features_viewer
   - scipy
+  - svgutils

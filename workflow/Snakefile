@@ -58,6 +58,9 @@ rule all:
         "results/plots/manhattan_gc_adj.pdf",
         "results/plots/manhattan_snp.png",
         "results/plots/manhattan_snp.pdf",
+        "results/plots/legend_only.png",
+        "results/plots/legend_only.pdf",
+        "results/plots/legend_only.svg"
         # GO Enrichment
         # "data/annotation/all_geneids.txt",
         # "results/go/target_geneids.txt",

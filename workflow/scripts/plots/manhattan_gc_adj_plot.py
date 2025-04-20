@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser(description="Manhattan plot using p_gc_adj valu
 parser.add_argument("--input", required=True, help="Input CSV with region metrics (e.g., candidates.csv)")
 parser.add_argument("--out_png", required=True, help="Output PNG path")
 parser.add_argument("--out_pdf", required=True, help="Output PDF path")
+parser.add_argument("--out_svg", required=True, help="Output SVG path")
 args = parser.parse_args()
 
 # -----------------------------
@@ -93,3 +94,4 @@ ax.set_xticklabels(chr_labels, rotation=45)
 plt.tight_layout()
 plt.savefig(args.out_png)
 plt.savefig(args.out_pdf)
+plt.savefig(args.out_svg)

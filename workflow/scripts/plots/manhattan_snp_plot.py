@@ -18,6 +18,7 @@ parser = argparse.ArgumentParser(description="Genome-wide Manhattan plot of SNP 
 parser.add_argument("--input", required=True, help="Input .tab file with genotypes")
 parser.add_argument("--out_png", required=True, help="Output PNG path")
 parser.add_argument("--out_pdf", required=True, help="Output PDF path")
+parser.add_argument("--out_svg", required=True, help="Output SVG path")
 args = parser.parse_args()
 
 # -----------------------------
@@ -137,9 +138,9 @@ ax.set_xticklabels(xlabels, rotation=45)
 ax.set_xlabel("Genomic Position (by Chromosome)")
 ax.set_ylabel("-log10(p-value)")
 ax.set_title("Genome-wide Sex-Associated SNPs", weight="bold")
-ax.legend()
 ax.grid(True, axis="y")
 
 plt.tight_layout()
 plt.savefig(args.out_png)
 plt.savefig(args.out_pdf)
+plt.savefig(args.out_svg)
