@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from scipy.stats import fisher_exact
+import json
 
 # -----------------------------
 # STYLE: Colorblind Palette
@@ -19,6 +20,7 @@ parser.add_argument("--input", required=True, help="Input .tab file with genotyp
 parser.add_argument("--out_png", required=True, help="Output PNG path")
 parser.add_argument("--out_pdf", required=True, help="Output PDF path")
 parser.add_argument("--out_svg", required=True, help="Output SVG path")
+parser.add_argument("--out_top_snps", required=True, help="Output file for top 5 SNPs information")
 args = parser.parse_args()
 
 # -----------------------------
@@ -103,6 +105,28 @@ for chrom in sorted(chromosomes, key=lambda x: int(x.replace("chr", ""))):
     offset += chr_df["pos"].max() + 1e6  # padding
 
 res_df["cumulative_pos"] = cumulative_pos
+
+# -----------------------------
+# SAVE TOP 5 SNPs TO FILE
+# -----------------------------
+top_snps = res_df.sort_values("-log10p", ascending=False).head(5)
+top_snp_info = []
+
+for _, snp in top_snps.iterrows():
+    orig_row = df[(df["CHROM"] == snp["chr"]) & (df["POS"] == snp["pos"])].iloc[0]
+    genotypes = {col: orig_row[col] for col in gt_columns}
+    top_snp_info.append({
+        "chromosome": snp["chr"],
+        "position": snp["pos"],
+        "p_value": snp["pval"],
+        "-log10_p_value": snp["-log10p"],
+        "genotypes": genotypes
+    })
+
+# Save to file (as JSON for readability)
+with open(args.out_top_snps, "w") as f:
+    json.dump(top_snp_info, f, indent=4)
+
 
 # -----------------------------
 # PLOTTING

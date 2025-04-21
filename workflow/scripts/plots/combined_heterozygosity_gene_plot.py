@@ -1,47 +1,45 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
+import numpy as np
 import matplotlib.patches as mpatches
+import matplotlib.gridspec as gridspec
 
 # -----------------------------
-# STYLE SETUP
+# COLORBLIND-FRIENDLY SETTINGS
 # -----------------------------
 sns.set(style="whitegrid", context="talk", palette="colorblind")
-colors = sns.color_palette("colorblind")
-female_color = colors[0]   # blue-ish
-male_color = colors[3]     # green-ish
-diff_color = colors[2]     # purple-ish
-region_color = colors[6]   # red-ish
-arrow_color = colors[0]    # blue from seaborn (index 0)
+cb_palette = sns.color_palette("colorblind")
+female_color = cb_palette[0]
+male_color = cb_palette[3]
+diff_color = cb_palette[2]
+region_color = cb_palette[6]
+arrow_color = cb_palette[0]
 
 # -----------------------------
 # ARGPARSE
 # -----------------------------
-parser = argparse.ArgumentParser(description="Combine smoothed heterozygosity plot with gene annotation track")
-
+parser = argparse.ArgumentParser(description="Combine heterozygosity plots with gene annotations")
 parser.add_argument("--vcf_tab", required=True, help="VCF tabular file with genotypes")
-parser.add_argument("--gff", required=True, help="Path to GFF3 annotation file")
-parser.add_argument("--seqid", required=True, help="Chromosome/scaffold name (e.g., 'chr4')")
-parser.add_argument("--region_start", type=int, required=True, help="Start coordinate of region")
-parser.add_argument("--region_end", type=int, required=True, help="End coordinate of region")
-parser.add_argument("--out_png", required=True, help="Output PNG path")
-parser.add_argument("--out_pdf", required=True, help="Output PDF path")
-parser.add_argument("--out_svg", required=True, help="Output SVG path")
-
+parser.add_argument("--gff", required=True, help="GFF3 annotation file")
+parser.add_argument("--seqid", required=True, help="Chromosome/scaffold name")
+parser.add_argument("--region_start", type=int, required=True, help="Start of region")
+parser.add_argument("--region_end", type=int, required=True, help="End of region")
+parser.add_argument("--out_png", required=True)
+parser.add_argument("--out_pdf", required=True)
+parser.add_argument("--out_svg", required=True)
 args = parser.parse_args()
 
 # -----------------------------
 # LOAD DATA
 # -----------------------------
 df = pd.read_csv(args.vcf_tab, sep="\t")
-
 col_names = ["seqid", "source", "type", "start", "end", "score", "strand", "phase", "attributes"]
 gff = pd.read_csv(args.gff, sep="\t", comment="#", names=col_names)
 
 # -----------------------------
-# HELPER FUNCTIONS
+# FUNCTIONS
 # -----------------------------
 def compute_heterozygosity(gt):
     if not isinstance(gt, str) or gt in ("./.", ".|."):
@@ -71,44 +69,41 @@ def extract_gene_id(attr):
     return "unknown"
 
 # -----------------------------
-# HETEROZYGOSITY
+# PROCESSING
 # -----------------------------
 gt_columns = [col for col in df.columns if col.endswith(".GT")]
 sex_map = {col: infer_sex(col) for col in gt_columns}
 female_inds = [col for col in gt_columns if sex_map[col] == "F"]
 male_inds = [col for col in gt_columns if sex_map[col] == "M"]
-
 positions = df["POS"]
+
+# Raw heterozygosity
 female_het = df[female_inds].applymap(compute_heterozygosity).mean(axis=1)
 male_het = df[male_inds].applymap(compute_heterozygosity).mean(axis=1)
 
-# Smooth
+# Smoothed heterozygosity
 window_size = 50
 female_het_smooth = female_het.rolling(window=window_size, min_periods=1).mean()
 male_het_smooth = male_het.rolling(window=window_size, min_periods=1).mean()
 diff_het = female_het_smooth - male_het_smooth
 
 # -----------------------------
-# GENE ANNOTATIONS (genes only)
+# GENE ANNOTATIONS
 # -----------------------------
-valid_types = ["gene"]
 region = gff[
     (gff["seqid"] == args.seqid) &
-    (gff["type"].isin(valid_types)) &
+    (gff["type"] == "gene") &
     (gff["start"] <= args.region_end) &
     (gff["end"] >= args.region_start)
 ].copy()
-
 region["gene_id"] = region["attributes"].apply(extract_gene_id)
 
-# Custom labeling for specific gene IDs
 label_dict = {
     "gene-BLAG_LOCUS17194": "HAO1",
     "gene-BLAG_LOCUS17195": "FLT1"
 }
 region["gene_label"] = region["gene_id"].apply(lambda gid: label_dict.get(gid, gid))
 
-# Assign non-overlapping tracks
 region_sorted = region.sort_values("start").reset_index(drop=True)
 region_sorted["track"] = 0
 track_ends = []
@@ -126,30 +121,47 @@ for i, row in region_sorted.iterrows():
         track_ends.append(row["end"])
 
 # -----------------------------
-# PLOTTING
+# PLOTTING WITH CUSTOM LAYOUT
 # -----------------------------
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 9), height_ratios=[3, 1], sharex=True)
+fig = plt.figure(figsize=(14, 13))
+gs = gridspec.GridSpec(3, 1, height_ratios=[2, 3, 1])
 
-# --- Heterozygosity Plot ---
-ax1.plot(positions, female_het_smooth, label="Females", color=female_color)
-ax1.plot(positions, male_het_smooth, label="Males", color=male_color)
-ax1.plot(positions, diff_het, label="Females - Males", color=diff_color, linestyle="--")
-ax1.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.2, label="Region of Interest")
+ax3 = fig.add_subplot(gs[0])  # Raw heterozygosity (top)
+ax1 = fig.add_subplot(gs[1], sharex=ax3)  # Smoothed het
+ax2 = fig.add_subplot(gs[2], sharex=ax3)  # Gene annotation
 
-ax1.set_ylabel("Mean Heterozygosity")
-ax1.set_title("Smoothed Heterozygosity by Sex Across Genomic Region")
+# X range
+x_min = args.region_start - 5000
+x_max = args.region_end + 25000
+cutoff_x = args.region_end + 5000  # Updated cutoff
+
+mask = positions <= cutoff_x
+
+# --- Raw Heterozygosity ---
+ax3.scatter(positions[mask], female_het[mask], color=female_color, alpha=0.6, s=8)
+ax3.scatter(positions[mask], male_het[mask], color=male_color, alpha=0.6, s=8)
+ax3.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.1)
+ax3.set_ylabel("Raw Het")
+ax3.grid(True)
+ax3.get_legend().remove() if ax3.get_legend() else None
+ax3.tick_params(labelbottom=False)
+
+# --- Smoothed Heterozygosity ---
+ax1.plot(positions, female_het_smooth, color=female_color)
+ax1.plot(positions, male_het_smooth, color=male_color)
+ax1.plot(positions, diff_het, color=diff_color, linestyle="--")
+ax1.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.2)
+ax1.set_ylabel("Smoothed Het")
 ax1.grid(True)
+ax1.get_legend().remove() if ax1.get_legend() else None
+ax1.tick_params(labelbottom=False)
 
 # --- Gene Annotation Track ---
 ax2.axvspan(args.region_start, args.region_end, color=region_color, alpha=0.2)
-
 for _, row in region_sorted.iterrows():
     y = row["track"] * 0.5
-    strand = row["strand"]
+    start, end, strand = row["start"], row["end"], row["strand"]
     name = row["gene_label"][:20]
-    start = row["start"]
-    end = row["end"]
-
     arrow = mpatches.FancyArrow(
         start if strand == "+" else end,
         y,
@@ -163,19 +175,20 @@ for _, row in region_sorted.iterrows():
         alpha=0.9
     )
     ax2.add_patch(arrow)
-    ax2.text((start + end) / 2, y + 0.2, name, ha="center", va="bottom", fontsize=7, rotation=0)
+    ax2.text((start + end) / 2, y + 0.2, name, ha="center", va="bottom", fontsize=7)
 
 ax2.set_ylim(-0.5, max(region_sorted["track"]) * 0.6 + 1)
 ax2.set_yticks([])
 ax2.set_xlabel("Base Pair Position (bp)")
+ax2.grid(True)
+ax2.get_legend().remove() if ax2.get_legend() else None
 
-# Shared X range
-x_min = args.region_start - 5000
-x_max = args.region_end + 25000
-ax1.set_xlim(x_min, x_max)
-ax2.set_xlim(x_min, x_max)
+# Apply shared x-limits
+for ax in (ax1, ax2, ax3):
+    ax.set_xlim(x_min, x_max)
 
-plt.tight_layout()
+# Final layout & export
+plt.tight_layout(h_pad=1.5)
 plt.savefig(args.out_png)
 plt.savefig(args.out_pdf)
 plt.savefig(args.out_svg)

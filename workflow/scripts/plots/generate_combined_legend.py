@@ -1,6 +1,7 @@
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import matplotlib.lines as mlines
 import seaborn as sns
 
 # -----------------------------
@@ -17,11 +18,11 @@ args = parser.parse_args()
 # -----------------------------
 sns.set_palette("colorblind")
 palette = sns.color_palette("colorblind")
-female_color = palette[0]   # blue
-male_color = palette[3]     # orange/green
-diff_color = palette[2]     # purple
-region_color = palette[6]   # pink/red
-arrow_color = palette[0]    # blue
+female_color = palette[0]
+male_color = palette[3]
+diff_color = palette[2]
+region_color = palette[6]
+arrow_color = palette[0]
 
 # -----------------------------
 # LEGEND ELEMENTS
@@ -30,14 +31,15 @@ legend_elements = [
     mpatches.Patch(color=female_color, label="Females"),
     mpatches.Patch(color=male_color, label="Males"),
     mpatches.Patch(color=diff_color, label="Females - Males"),
-    mpatches.Patch(color=arrow_color, label="Gene Arrow"),
+    mlines.Line2D([0], [0], color=arrow_color, lw=2,
+                  marker='>', markersize=10, label="Gene Arrow", linestyle='-'),
     mpatches.Patch(color=region_color, label="Region of Interest")
 ]
 
 # -----------------------------
 # LEGEND-ONLY FIGURE (Vertical)
 # -----------------------------
-fig, ax = plt.subplots(figsize=(3.5, 3))  # Adjust size if needed
+fig, ax = plt.subplots(figsize=(3.5, 3))
 ax.axis("off")
 
 legend = ax.legend(

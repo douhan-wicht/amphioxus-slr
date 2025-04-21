@@ -26,7 +26,8 @@ localrules: import_data, subset_vcf
 include: "rules/setup.smk",
 include: "rules/SLRfinder.smk",
 include: "rules/plots.smk",
-include: "rules/go.smk"
+include: "rules/go.smk",
+include: "rules/snp.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
@@ -60,7 +61,12 @@ rule all:
         "results/plots/manhattan_snp.pdf",
         "results/plots/legend_only.png",
         "results/plots/legend_only.pdf",
-        "results/plots/legend_only.svg"
+        "results/plots/legend_only.svg",
+        # Top SNPs
+        "results/plots/top5_snps.json",
+        # "results/snp/top5_snps_annotated.tsv",
+        # "results/snp/chr4_snps.ann.vcf",
+        "results/snp/top5_snp_effects.tsv"
         # GO Enrichment
         # "data/annotation/all_geneids.txt",
         # "results/go/target_geneids.txt",

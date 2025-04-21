@@ -338,7 +338,8 @@ rule manhattan_snp_plot:
     output:
         png = "results/plots/manhattan_snp.png",
         pdf = "results/plots/manhattan_snp.pdf",
-        svg = "results/plots/manhattan_snp.svg"
+        svg = "results/plots/manhattan_snp.svg",
+        top_snps = "results/plots/top5_snps.json"
     log:
         out = "logs/plots/manhattan_snp.out",
         err = "logs/plots/manhattan_snp.err"
@@ -356,8 +357,10 @@ rule manhattan_snp_plot:
             --out_png {output.png} \
             --out_pdf {output.pdf} \
             --out_svg {output.svg} \
+            --out_top_snps {output.top_snps} \
             > {log.out} 2> {log.err}
         """
+
 
 rule figure_2:
     """
