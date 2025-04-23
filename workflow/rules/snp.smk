@@ -170,3 +170,66 @@ rule classify_snps:
             --gff {input.gff} \
             --output {output.effects}
         """
+
+rule rename_chroms_vcf:
+    input:
+        vcf="tmp/amphioxus/a15m75/amphioxus_chr4_a15m75.recode.vcf",
+        mapping="data/annotation/mapping.txt"
+    output:
+        vcf="data/renamed/renamed.vcf.gz"
+    conda:
+        "../envs/snp.yaml"
+    shell:
+        """
+        bcftools annotate --rename-chrs {input.mapping} -O z -o {output.vcf} {input.vcf}
+        """
+
+
+rule rename_chroms_gtf:
+    input:
+        gtf="data/annotation/genomic.gtf",
+        mapping="data/annotation/mapping.txt"
+    output:
+        gtf="data/renamed/renamed.gtf"
+    conda:
+        "../envs/snp.yaml"
+    run:
+        with open(input.mapping) as mapfile:
+            chrom_map = dict(line.strip().split() for line in mapfile)
+        with open(input.gtf) as fin, open(output.gtf, "w") as fout:
+            for line in fin:
+                if line.startswith("#"):
+                    fout.write(line)
+                    continue
+                parts = line.strip().split("\t")
+                if parts[0] in chrom_map:
+                    parts[0] = chrom_map[parts[0]]
+                fout.write("\t".join(parts) + "\n")
+
+rule index_fasta:
+    input:
+        fasta="data/annotation/GCA_927797965.1_BraLan3_genomic.fna"
+    output:
+        fai="data/annotation/GCA_927797965.1_BraLan3_genomic.fna.fai"
+    conda:
+        "../envs/snp.yaml"
+    threads: 1
+    shell:
+        """
+        samtools faidx {input.fasta}
+        """
+
+rule annotate_variants_csq:
+    input:
+        vcf="data/renamed/renamed.vcf.gz",
+        fasta="data/annotation/GCA_927797965.1_BraLan3_genomic.fna",
+        gtf="data/renamed/renamed.gtf"  # replace with your GTF filename
+    output:
+        annotated_vcf="results/snp/renamed.csq.vcf"
+    conda:
+        "../envs/snp.yaml"
+    shell:
+        """
+        mkdir -p results/snp
+        bcftools csq -f {input.fasta} -g {input.gtf} -O v -o {output.annotated_vcf} {input.vcf}
+        """

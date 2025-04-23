@@ -66,7 +66,12 @@ rule all:
         "results/plots/top5_snps.json",
         # "results/snp/top5_snps_annotated.tsv",
         # "results/snp/chr4_snps.ann.vcf",
-        "results/snp/top5_snp_effects.tsv"
+        "results/snp/top5_snp_effects.tsv",
+        # ========================================
+        # "data/renamed/renamed.vcf.gz",
+        # "data/renamed/renamed.gtf",
+        # "data/annotation/GCA_927797965.1_BraLan3_genomic.fna.fai",
+        # "results/snp/renamed.csq.vcf"
         # GO Enrichment
         # "data/annotation/all_geneids.txt",
         # "results/go/target_geneids.txt",

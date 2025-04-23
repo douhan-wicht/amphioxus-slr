@@ -10,3 +10,6 @@ dependencies:
   - pyvcf
   - biopython
   - pandas
+  - bcftools
+  - htslib
+  - samtools
