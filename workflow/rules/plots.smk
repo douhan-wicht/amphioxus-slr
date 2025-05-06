@@ -97,29 +97,6 @@ rule gene_region_plot:
 ## Description: Convert VCF to tabular format using GATK VariantsToTable.
 ################################################
 
-# rule vcf_to_tab:
-#     """
-#     Convert VCF to tabular format using GATK VariantsToTable.
-#     """
-#     input:
-#         vcf = "tmp/amphioxus/a15m75/amphioxus_chr4_a15m75.recode.vcf"
-#     output:
-#         tab = "tmp/amphioxus/amphioxus_chr4.tab"
-#     log:
-#         out = "logs/plots/vcf_to_tab.out",
-#         err = "logs/plots/vcf_to_tab.err"
-#     conda:
-#         "../envs/plots.yaml"
-#     shell:
-#         """
-#         gatk VariantsToTable \
-#             -V {input.vcf} \
-#             -O {output.tab} \
-#             -F CHROM -F POS -F REF -F ALT \
-#             -GF GT \
-#             > {log.out} 2> {log.err}
-#         """
-
 rule vcf_to_tab:
     """
     Convert VCF to tabular format using GATK VariantsToTable for each chromosome.
@@ -409,4 +386,89 @@ rule generate_combined_legend:
             --out_png {output.png} \
             --out_pdf {output.pdf} \
             --out_svg {output.svg}
+        """
+
+rule heatmap_plot_flt1:
+    input:
+        "data/bgee/bgee_heatmap_flt1.tsv"
+    output:
+        png = "results/plots/heatmap_plot_flt1.png",
+        pdf = "results/plots/heatmap_plot_flt1.pdf",
+        svg = "results/plots/heatmap_plot_flt1.svg",
+    log:
+        out = "logs/plots/heatmap_plot_flt1.out",
+        err = "logs/plots/heatmap_plot_flt1.err"
+    conda:
+        "../envs/plots.yaml"
+    resources:
+        mem_mb = 2000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "2m"
+    shell:
+        """
+        python workflow/scripts/plots/heatmap_plot.py \
+            --input {input} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
+            --gene FLT1 \
+            > {log.out} 2> {log.err}
+        """
+
+rule heatmap_plot_hao1:
+    input:
+        "data/bgee/bgee_heatmap_hao1.tsv"
+    output:
+        png = "results/plots/heatmap_plot_hao1.png",
+        pdf = "results/plots/heatmap_plot_hao1.pdf",
+        svg = "results/plots/heatmap_plot_hao1.svg",
+    log:
+        out = "logs/plots/heatmap_plot_hao1.out",
+        err = "logs/plots/heatmap_plot_hao1.err"
+    conda:
+        "../envs/plots.yaml"
+    resources:
+        mem_mb = 2000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "2m"
+    shell:
+        """
+        python workflow/scripts/plots/heatmap_plot.py \
+            --input {input} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
+            --gene HAO1 \
+            > {log.out} 2> {log.err}
+        """
+
+rule heatmap_plot_dual:
+    input:
+        hao1 = "data/bgee/bgee_heatmap_hao1.tsv",
+        flt1 = "data/bgee/bgee_heatmap_flt1.tsv"
+    output:
+        png = "results/plots/heatmap_plot_hao1_flt1.png",
+        pdf = "results/plots/heatmap_plot_hao1_flt1.pdf",
+        svg = "results/plots/heatmap_plot_hao1_flt1.svg",
+    log:
+        out = "logs/plots/heatmap_plot_hao1_flt1.out",
+        err = "logs/plots/heatmap_plot_hao1_flt1.err"
+    conda:
+        "../envs/plots.yaml"
+    resources:
+        mem_mb = 2000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "2m"
+    shell:
+        """
+        python workflow/scripts/plots/heatmap_dual_plot.py \
+            --input1 {input.hao1} --gene1 HAO1 \
+            --input2 {input.flt1} --gene2 FLT1 \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
+            > {log.out} 2> {log.err}
         """

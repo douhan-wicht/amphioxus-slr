@@ -27,7 +27,8 @@ include: "rules/setup.smk",
 include: "rules/SLRfinder.smk",
 include: "rules/plots.smk",
 include: "rules/go.smk",
-include: "rules/snp.smk"
+include: "rules/snp.smk",
+include: "rules/misc.smk"
 
 # Include a master rule to produce all the final output files
 rule all:
@@ -62,11 +63,25 @@ rule all:
         "results/plots/legend_only.png",
         "results/plots/legend_only.pdf",
         "results/plots/legend_only.svg",
+        # Miscellaneous
+        "results/misc/haplotype_check_combined.tsv",
+        "results/misc/haplotype_check_combined_summary.txt",
+        "results/misc/ld_cluster_snps.txt",
         # Top SNPs
         "results/plots/top5_snps.json",
         # "results/snp/top5_snps_annotated.tsv",
         # "results/snp/chr4_snps.ann.vcf",
         "results/snp/top5_snp_effects.tsv",
+        # Gene expression heatmaps
+        "results/plots/heatmap_plot_flt1.png",
+        "results/plots/heatmap_plot_flt1.pdf",
+        "results/plots/heatmap_plot_flt1.svg",
+        "results/plots/heatmap_plot_hao1.png",
+        "results/plots/heatmap_plot_hao1.pdf",
+        "results/plots/heatmap_plot_hao1.svg",
+        "results/plots/heatmap_plot_hao1_flt1.png",
+        "results/plots/heatmap_plot_hao1_flt1.pdf",
+        "results/plots/heatmap_plot_hao1_flt1.svg",
         # ========================================
         # "data/renamed/renamed.vcf.gz",
         # "data/renamed/renamed.gtf",

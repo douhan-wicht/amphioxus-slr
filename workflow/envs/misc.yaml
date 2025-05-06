@@ -1,0 +1,13 @@
+name: misc
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - matplotlib
+  - seaborn
+  - numpy
+  - pandas
+  - pyreadr
+  - r-base
