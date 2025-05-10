@@ -54,45 +54,45 @@ chr_lengths = {
 chromosomes = sorted(df['chr'].unique(), key=lambda x: int(x.replace("chr", "")))
 
 # -----------------------------
-# PLOTTING
+# PLOTTING (VERTICAL CHROMOSOMES)
 # -----------------------------
-fig, ax = plt.subplots(figsize=(14, len(chromosomes) * 1.2))
-y_spacing = 2
-yticks = []
+fig, ax = plt.subplots(figsize=(len(chromosomes) * 1.2, 14))
+x_spacing = 2
+xticks = []
 max_chr_length = max(chr_lengths.values())
 
-# Normalize color scale (colorblind-friendly palette)
+# Normalize color scale
 norm = Normalize(vmin=df['Sex_g'].min(), vmax=df['Sex_g'].max())
-cmap = cm.get_cmap('viridis')  # better for colorblind vision than RdYlGn
+cmap = cm.get_cmap('viridis')  # colorblind-friendly
 
 # Plot chromosomes and regions
 for i, chr_name in enumerate(chromosomes):
-    y = i * y_spacing
-    yticks.append(y)
+    x = i * x_spacing
+    xticks.append(x)
 
     chr_data = df[df['chr'] == chr_name]
     chr_num = chr_name.replace("chr", "")
     chr_length = chr_lengths.get(chr_num, chr_data['region_end'].max())
 
-    ax.hlines(y=y, xmin=0, xmax=chr_length, color='black', linewidth=8, alpha=0.5)
+    ax.vlines(x=x, ymin=0, ymax=chr_length, color='black', linewidth=8, alpha=0.5)
 
     for _, row in chr_data.iterrows():
         color = cmap(norm(row['Sex_g']))
         ax.add_patch(plt.Rectangle(
-            (row['region_start'], y - 0.5),
-            row['region_length'],
+            (x - 0.5, row['region_start']),
             1.0,
+            row['region_length'],
             color=color,
             edgecolor='none',
             alpha=0.95
         ))
 
 # Final layout
-ax.set_yticks(yticks)
-ax.set_yticklabels(chromosomes, fontsize=10)
-ax.set_xlim(0, max_chr_length * 1.05)
-ax.set_ylim(-1, max(yticks) + y_spacing)
-ax.set_xlabel("Genomic Position (bp)", fontsize=12)
+ax.set_xticks(xticks)
+ax.set_xticklabels(chromosomes, rotation=90, fontsize=10)
+ax.set_ylim(0, max_chr_length * 1.05)
+ax.set_xlim(-1, max(xticks) + x_spacing)
+ax.set_ylabel("Genomic Position (bp)", fontsize=12)
 ax.set_title("SLR Regions Colored by Sex_g", fontsize=14, weight='bold')
 sns.despine()
 

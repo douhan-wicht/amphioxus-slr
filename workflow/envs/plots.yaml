@@ -5,12 +5,12 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  - matplotlib
-  - seaborn
-  - numpy
-  - pandas
+  - matplotlib=3.10.1
+  - seaborn=0.13.2
+  - numpy=2.2.5
+  - pandas=2.2.3
   - gatk4
   - openjdk=11
-  - dna_features_viewer
-  - scipy
-  - svgutils
+  - dna_features_viewer=3.1.4
+  - scipy=1.15.2
+  - svgutils=0.3.4
