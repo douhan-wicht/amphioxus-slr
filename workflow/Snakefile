@@ -82,6 +82,10 @@ rule all:
         "results/plots/heatmap_plot_hao1_flt1.png",
         "results/plots/heatmap_plot_hao1_flt1.pdf",
         "results/plots/heatmap_plot_hao1_flt1.svg",
+        # Reproduced Het x PC1 plot
+        "results/plots/het_pc1_plot.png",
+        "results/plots/het_pc1_plot.pdf",
+        "results/plots/het_pc1_plot.svg"
         # ========================================
         # "data/renamed/renamed.vcf.gz",
         # "data/renamed/renamed.gtf",

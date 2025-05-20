@@ -161,7 +161,7 @@ ax.set_xticks(xticks)
 ax.set_xticklabels(xlabels, rotation=45)
 ax.set_xlabel("Genomic Position (by Chromosome)")
 ax.set_ylabel("-log10(p-value)")
-ax.set_title("Genome-wide Sex-Associated SNPs", weight="bold")
+# ax.set_title("Genome-wide Sex-Associated SNPs", weight="bold")
 ax.grid(True, axis="y")
 
 plt.tight_layout()

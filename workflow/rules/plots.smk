@@ -472,3 +472,30 @@ rule heatmap_plot_dual:
             --out_svg {output.svg} \
             > {log.out} 2> {log.err}
         """
+
+rule het_pc1_plot:
+    input:
+        rds = "tmp/amphioxus/LD8.5cl20/data_all.rds"
+    output:
+        png = "results/plots/het_pc1_plot.png",
+        pdf = "results/plots/het_pc1_plot.pdf",
+        svg = "results/plots/het_pc1_plot.svg"
+    log:
+        out = "logs/plots/het_pc1_plot.out",
+        err = "logs/plots/het_pc1_plot.err"
+    conda:
+        "../envs/plots.yaml"
+    resources:
+        mem_mb = 2000,
+        cpus_per_task = 1,
+        threads = 1,
+        runtime = "2m"
+    shell:
+        """
+        Rscript workflow/scripts/plots/het_pc1_plot.R \
+            --input {input.rds} \
+            --out_png {output.png} \
+            --out_pdf {output.pdf} \
+            --out_svg {output.svg} \
+            > {log.out} 2> {log.err}
+        """
