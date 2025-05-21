@@ -85,15 +85,9 @@ rule all:
         # Reproduced Het x PC1 plot
         "results/plots/het_pc1_plot.png",
         "results/plots/het_pc1_plot.pdf",
-        "results/plots/het_pc1_plot.svg"
-        # ========================================
-        # "data/renamed/renamed.vcf.gz",
-        # "data/renamed/renamed.gtf",
-        # "data/annotation/GCA_927797965.1_BraLan3_genomic.fna.fai",
-        # "results/snp/renamed.csq.vcf"
-        # GO Enrichment
-        # "data/annotation/all_geneids.txt",
-        # "results/go/target_geneids.txt",
-        # "data/go/gene2go_7740.tsv",
-        # "data/go/go-basic.obo",
-        # "results/go/go_enrichment.tsv"
+        "results/plots/het_pc1_plot.svg",
+        # Miscellaneous
+        "results/misc/normalized_ld_clusters.tsv",
+        "results/plots/ld_clusters_per_mb.png",
+        expand("results/misc/snp_counts/ShortVariants_HardCallableFiltered.{chromosome}.txt", chromosome=config["CHROMOSOMES"]),
+        "results/misc/snp_counts/summary_snp_counts.tsv"

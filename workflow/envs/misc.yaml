@@ -9,5 +9,10 @@ dependencies:
   - seaborn
   - numpy
   - pandas
+  - pysam
+  - glob2
   - pyreadr
   - r-base
+  - vcftools
+  - grep
+  - coreutils

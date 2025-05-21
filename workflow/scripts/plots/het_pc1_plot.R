@@ -53,9 +53,9 @@ cluster_data$sex_label <- case_when(
 
 # Assign Seaborn colorblind palette to sex groups
 sex_colors <- c(
-  "Male" = "#DE8F05",     # orange
-  "Female" = "#0173B2",   # blue
-  "Unknown" = "#029E73"   # green
+  "Male" = "#DE8F05",
+  "Female" = "#0173B2",
+  "Unknown" = "#029E73"
 )
 
 # Plot
@@ -65,17 +65,16 @@ p <- ggplot(cluster_data, aes(x = PC1_scaled, y = Het_scaled, color = sex_label)
   scale_color_manual(values = sex_colors, name = "Sex") +
   labs(
     x = "PC1",
-    y = "Heterozygosity",
-    # title = "Heterozygosity × PC1 — Cluster 4471"
+    y = "Heterozygosity"
   ) +
   theme_minimal(base_size = 14) +
   theme(
     legend.position = "right",
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA)
+    panel.background = element_rect(fill = "transparent", color = NA),
+    plot.background = element_rect(fill = "transparent", color = NA)
   )
 
-# Save
-ggsave(opt$out_png, plot = p, width = 7, height = 5, dpi = 300)
-ggsave(opt$out_pdf, plot = p, width = 7, height = 5)
-ggsave(opt$out_svg, plot = p, width = 7, height = 5)
+# Save with transparent background
+ggsave(opt$out_png, plot = p, width = 7, height = 5, dpi = 300, bg = "transparent")
+ggsave(opt$out_pdf, plot = p, width = 7, height = 5, bg = "transparent")
+ggsave(opt$out_svg, plot = p, width = 7, height = 5, bg = "transparent")

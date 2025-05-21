@@ -221,7 +221,8 @@ rule combined_heterozygosity_gene_plot:
     """
     input:
         vcf_tab = "tmp/amphioxus/amphioxus_chr4.tab",
-        gff = "data/annotation/genomic.gff"
+        gff = "data/annotation/genomic.gff",
+        top_snps = "results/snp/top5_snps_filtered.tsv"
     output:
         png = "results/plots/combined_view.png",
         pdf = "results/plots/combined_view.pdf",
@@ -240,6 +241,7 @@ rule combined_heterozygosity_gene_plot:
         python workflow/scripts/plots/combined_heterozygosity_gene_plot.py \
             --vcf_tab {input.vcf_tab} \
             --gff {input.gff} \
+            --top_snps {input.top_snps} \
             --seqid {params.seqid} \
             --region_start {params.region_start} \
             --region_end {params.region_end} \
@@ -498,4 +500,25 @@ rule het_pc1_plot:
             --out_pdf {output.pdf} \
             --out_svg {output.svg} \
             > {log.out} 2> {log.err}
+        """
+
+rule plot_normalized_ld_clusters:
+    input:
+        table="results/misc/normalized_ld_clusters.tsv",
+        snps="results/misc/snp_counts/summary_snp_counts.tsv"
+    output:
+        png="results/plots/ld_clusters_per_mb.png",
+        pdf="results/plots/ld_clusters_per_mb.pdf",
+        svg="results/plots/ld_clusters_per_mb.svg"
+    log:
+        err="logs/plots/ld_clusters_per_mb.err"
+    conda:
+        "../envs/plots.yaml"
+    shell:
+        """
+        python workflow/scripts/plots/normalized_ld_clusters_plot.py \
+            --input {input.table} \
+            --snp_table {input.snps} \
+            --output results/plots/ld_clusters_per_mb \
+            2> {log.err}
         """
